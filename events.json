@@ -1,0 +1,32 @@
+[
+  {
+    "id": "ejemplo-1",
+    "title": "Mercado de segunda mano en La Remonta",
+    "datetime": "2025-06-07T10:00:00",
+    "end_datetime": "2025-06-07T15:00:00",
+    "location": "La Remonta, Calle Bravo Murillo 118, Tetuán",
+    "description": "Mercadillo de intercambio y venta de objetos de segunda mano. Trae lo que ya no uses y llévate algo nuevo. Entrada libre.",
+    "source_id": "ejemplo",
+    "created_at": "2025-05-28T10:00:00"
+  },
+  {
+    "id": "ejemplo-2",
+    "title": "Taller de huerto urbano",
+    "datetime": "2025-06-14T11:00:00",
+    "end_datetime": "2025-06-14T13:00:00",
+    "location": "Centro Cultural Tetuán, Calle Noreña 6",
+    "description": "Aprende a cultivar tus propias verduras en casa con materiales reciclados. Plazas limitadas, apúntate antes del jueves.",
+    "source_id": "ejemplo",
+    "created_at": "2025-05-28T10:00:00"
+  },
+  {
+    "id": "ejemplo-3",
+    "title": "Cine de barrio al aire libre",
+    "datetime": "2025-06-21T21:30:00",
+    "end_datetime": "2025-06-21T23:30:00",
+    "location": "Plaza de Cuatro Caminos, Tetuán",
+    "description": "Proyección gratuita al aire libre. Trae tu manta y silla. Esta semana: El viaje de Chihiro (doblada). Organiza la AVV Tetuán.",
+    "source_id": "ejemplo",
+    "created_at": "2025-05-28T10:00:00"
+  }
+]
