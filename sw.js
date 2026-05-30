@@ -1,18 +1,18 @@
-const CACHE_NAME = 'agenda-tetuan-v2';
+const CACHE_NAME = 'agenda-tetuan-v3';
+const BASE = '/agendadetetuan/';
 const STATIC = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-512.png',
-  './events.json',
+  BASE,
+  BASE + 'index.html',
+  BASE + 'manifest.json',
+  BASE + 'icon-192.png',
+  BASE + 'icon-512.png',
 ];
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return Promise.allSettled(STATIC.map(url => cache.add(url)));
-    })
+    caches.open(CACHE_NAME).then(cache =>
+      Promise.allSettled(STATIC.map(url => cache.add(url)))
+    )
   );
   self.skipWaiting();
 });
@@ -26,12 +26,11 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Network first, cache fallback — nunca sirve events.json del caché
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  // events.json siempre de red (para que los borrados se reflejen)
-  if (url.pathname.endsWith('events.json')) {
+  // Nunca cachear events.json ni imágenes (para que borrados y nuevos se vean)
+  if (url.pathname.endsWith('events.json') || url.pathname.includes('/images/')) {
     e.respondWith(fetch(e.request));
     return;
   }
@@ -50,13 +49,13 @@ self.addEventListener('push', e => {
   const data = e.data ? e.data.json() : {};
   e.waitUntil(self.registration.showNotification(data.title || 'Agenda Tetuán', {
     body: data.body || 'Nuevo evento en el barrio',
-    icon: './icon-192.png',
-    badge: './icon-192.png',
-    data: data.url || './',
+    icon: BASE + 'icon-192.png',
+    badge: BASE + 'icon-192.png',
+    data: data.url || BASE,
   }));
 });
 
 self.addEventListener('notificationclick', e => {
   e.notification.close();
-  e.waitUntil(clients.openWindow(e.notification.data || './'));
+  e.waitUntil(clients.openWindow(e.notification.data || BASE));
 });

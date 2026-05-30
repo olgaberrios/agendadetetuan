@@ -2,7 +2,7 @@
   "name": "Agenda Tetuán",
   "short_name": "Agenda Tetuán",
   "description": "Actividades y eventos del barrio de Tetuán, Madrid",
-  "start_url": "/",
+  "start_url": "/agendadetetuan/",
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#003DA5",
@@ -22,6 +22,11 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["lifestyle", "social"],
-  "screenshots": []
+  "categories": [
+    "lifestyle",
+    "social"
+  ],
+  "screenshots": [],
+  "scope": "/agendadetetuan/",
+  "id": "/agendadetetuan/"
 }

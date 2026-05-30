@@ -325,7 +325,8 @@ def main():
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     # Limpieza diaria a las 3:00 AM
-    app.job_queue.run_daily(daily_cleanup, time=datetime.strptime("03:00", "%H:%M").time())
+    from datetime import time as dtime
+    app.job_queue.run_daily(daily_cleanup, time=dtime(3, 0))
     log.info(f"✅ Escuchando mensajes de {CHANNEL_USERNAME}")
     app.run_polling(allowed_updates=["channel_post", "message"])
 
