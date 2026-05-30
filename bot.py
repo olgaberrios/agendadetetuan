@@ -278,7 +278,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await notify_admin(context, event_data, ok)
 
 # ─── ARRANQUE ─────────────────────────────────────────────────────────────────
-async def main():
+def main():
     log.info("🚇 Bot Agenda Tetuán arrancando...")
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
@@ -286,14 +286,8 @@ async def main():
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
     log.info(f"✅ Escuchando mensajes de {CHANNEL_USERNAME}")
-    await app.run_polling(allowed_updates=["channel_post", "message"])
+    app.run_polling(allowed_updates=["channel_post", "message"])
 
 
 if __name__ == "__main__":
-    import asyncio
-    import sys
-    try:
-        asyncio.run(main())
-    except Exception as e:
-        log.error(f"❌ Error fatal: {e}", exc_info=True)
-        sys.exit(1)
+    main()
