@@ -76,28 +76,50 @@ Reglas:
 - Responde ÚNICAMENTE con el JSON."""
 
 # ─── LLAMADA A OPENROUTER ─────────────────────────────────────────────────────
-def call_openrouter(messages: list) -> str | None:
-    try:
-        resp = http_requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json",
-                "HTTP-Referer": "https://agendatetuan.github.io",
-                "X-Title": "Agenda Tetuán Bot"
-            },
-            json={
-                "model": "qwen/qwen2.5-vl-72b-instruct:free",
-                "messages": messages,
-                "max_tokens": 800
-            },
-            timeout=30
-        )
-        resp.raise_for_status()
-        return resp.json()["choices"][0]["message"]["content"].strip()
-    except Exception as e:
-        log.error(f"OpenRouter error: {e}")
-        return None
+# Modelos gratuitos con soporte de imágenes, en orden de preferencia
+FREE_VISION_MODELS = [
+    "qwen/qwen2.5-vl-72b-instruct:free",
+    "qwen/qwen2-vl-7b-instruct:free",
+    "meta-llama/llama-3.2-11b-vision-instruct:free",
+    "openrouter/free",
+]
+
+FREE_TEXT_MODELS = [
+    "meta-llama/llama-3.3-70b-instruct:free",
+    "deepseek/deepseek-r1:free",
+    "mistralai/mistral-small-3.1-24b-instruct:free",
+    "openrouter/free",
+]
+
+def call_openrouter(messages: list, vision: bool = False) -> str | None:
+    models = FREE_VISION_MODELS if vision else FREE_TEXT_MODELS
+    for model in models:
+        try:
+            log.info(f"  Probando modelo: {model}")
+            resp = http_requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers={
+                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                    "Content-Type": "application/json",
+                    "HTTP-Referer": "https://agendatetuan.github.io",
+                    "X-Title": "Agenda Tetuán Bot"
+                },
+                json={
+                    "model": model,
+                    "messages": messages,
+                    "max_tokens": 800
+                },
+                timeout=30
+            )
+            resp.raise_for_status()
+            result = resp.json()["choices"][0]["message"]["content"]
+            if result:
+                log.info(f"  Modelo OK: {model}")
+                return result.strip()
+        except Exception as e:
+            log.warning(f"  Modelo {model} falló: {e}, probando siguiente...")
+    log.error("Todos los modelos fallaron")
+    return None
 
 # ─── EXTRAER EVENTO ───────────────────────────────────────────────────────────
 def extract_from_text(text: str) -> dict | None:
