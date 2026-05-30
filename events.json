@@ -50,6 +50,16 @@
     "created_at": "2026-05-30T18:00:57.979747+00:00"
   },
   {
+    "id": "5aa32a6705",
+    "title": "Taller Diseño del Huerto",
+    "datetime": "2026-05-31T18:00:00",
+    "end_datetime": null,
+    "location": "Huerto Comunitario Bellas Vistas, Calle Tenerife 7, Tetuán, Madrid",
+    "description": "Taller para diseñar los diferentes espacios del huerto, abordando el diseño, la elección de espacios y el análisis de problemas y soluciones.",
+    "source_id": "img_4916",
+    "created_at": "2026-05-30T19:17:14.432142+00:00"
+  },
+  {
     "id": "b943187173",
     "title": "Taller de yoga",
     "datetime": "2026-06-03T10:00:00",
