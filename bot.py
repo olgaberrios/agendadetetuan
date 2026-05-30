@@ -255,17 +255,17 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await notify_admin(context, event_data, ok)
 
 # ─── ARRANQUE ─────────────────────────────────────────────────────────────────
-def main():
+async def main():
     log.info("🚇 Bot Agenda Tetuán arrancando...")
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
-    # Solo escucha mensajes del canal (channel_post) o del admin en pruebas
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
 
     log.info(f"✅ Escuchando mensajes de {CHANNEL_USERNAME}")
-    app.run_polling(allowed_updates=["channel_post", "message"])
+    await app.run_polling(allowed_updates=["channel_post", "message"])
 
 
 if __name__ == "__main__":
-    main()
+    import asyncio
+    asyncio.run(main())
