@@ -28,5 +28,15 @@
     "description": "Proyección gratuita al aire libre. Trae tu manta y silla. Esta semana: El viaje de Chihiro (doblada). Organiza la AVV Tetuán.",
     "source_id": "ejemplo",
     "created_at": "2025-05-28T10:00:00"
+  },
+  {
+    "id": "b943187173",
+    "title": "Taller de yoga",
+    "datetime": "2026-06-03T10:00:00",
+    "end_datetime": null,
+    "location": "Centro Cultural Tetuán",
+    "description": "Taller de yoga el martes 3 de junio a las 10h en el Centro Cultural Tetuán",
+    "source_id": "12",
+    "created_at": "2026-05-30T17:25:39.136578+00:00"
   }
 ]
