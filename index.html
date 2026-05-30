@@ -1049,6 +1049,7 @@
       <button class="modal-close" id="modal-close">✕</button>
     </div>
     <div id="modal-meta"></div>
+    <img id="modal-img" src="" alt="Cartel" style="display:none;width:100%;border-radius:10px;margin-bottom:14px;object-fit:cover;max-height:300px;" />
     <div class="modal-desc" id="modal-desc"></div>
     <div class="modal-actions" id="modal-actions"></div>
   </div>
@@ -1253,6 +1254,7 @@ function renderEvents(f) {
         </div>
       </div>
       ${ev.description?`<div class="event-desc">${ev.description}</div>`:''}
+      ${ev.image_url?`<img src="${ev.image_url}" alt="Cartel del evento" style="width:100%;border-radius:8px;margin-top:4px;object-fit:cover;max-height:220px;" loading="lazy" />`:''}
       <div class="card-actions">
         <a class="btn-gcal" href="${buildGCalUrl(ev)}" target="_blank">📅 Google Calendar</a>
         <a class="btn-ics" href="#" onclick="dlICS(${i},event)">⬇ .ICS</a>

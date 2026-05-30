@@ -181,12 +181,66 @@ def save_events(events: list, sha: str) -> bool:
         log.error(f"Error GitHub: {e}")
         return False
 
-def add_event(event_data: dict, source_id: str) -> bool:
+def upload_image_to_github(image_bytes: bytes, filename: str) -> str | None:
+    """Sube imagen a /images/ en GitHub y devuelve la URL pública."""
+    try:
+        path = f"images/{filename}"
+        b64  = base64.standard_b64encode(image_bytes).decode("utf-8")
+        try:
+            existing = repo.get_contents(path)
+            repo.update_file(path, "Actualizar imagen", b64, existing.sha)
+        except GithubException:
+            repo.create_file(path, "Subir imagen de evento", b64)
+        raw_url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/{path}"
+        log.info(f"  Imagen subida: {raw_url}")
+        return raw_url
+    except Exception as e:
+        log.error(f"  Error subiendo imagen: {e}")
+        return None
+
+def cleanup_past_images():
+    """Borra de GitHub las imágenes de eventos ya pasados."""
+    try:
+        events, sha = load_events()
+        now = datetime.now(timezone.utc)
+        changed = False
+        for ev in events:
+            if not ev.get("image_url"):
+                continue
+            dt_str = ev.get("end_datetime") or ev.get("datetime", "")
+            if not dt_str:
+                continue
+            try:
+                dt = datetime.fromisoformat(dt_str)
+                if dt.tzinfo is None:
+                    dt = dt.replace(tzinfo=timezone.utc)
+                if dt < now:
+                    filename = ev["image_url"].split("/images/")[-1]
+                    try:
+                        f = repo.get_contents(f"images/{filename}")
+                        repo.delete_file(f"images/{filename}", "Borrar imagen de evento pasado", f.sha)
+                        log.info(f"  Imagen borrada: {filename}")
+                    except GithubException:
+                        pass
+                    ev["image_url"] = None
+                    changed = True
+            except Exception:
+                continue
+        if changed:
+            save_events(events, sha)
+            log.info("Limpieza de imagenes completada")
+    except Exception as e:
+        log.error(f"Error en limpieza: {e}")
+
+def add_event(event_data: dict, source_id: str, image_bytes: bytes = None) -> bool:
     events, sha = load_events()
     if any(e.get("source_id") == source_id for e in events):
         log.info(f"Duplicado, ignorando: {source_id}")
         return False
     event_id = hashlib.md5(f"{source_id}{event_data.get('datetime','')}".encode()).hexdigest()[:10]
+    image_url = None
+    if image_bytes:
+        image_url = upload_image_to_github(image_bytes, f"{event_id}.jpg")
     events.append({
         "id":           event_id,
         "title":        event_data.get("title", "Sin título"),
@@ -194,11 +248,13 @@ def add_event(event_data: dict, source_id: str) -> bool:
         "end_datetime": event_data.get("end_datetime"),
         "location":     event_data.get("location"),
         "description":  event_data.get("description", ""),
+        "image_url":    image_url,
         "source_id":    source_id,
         "created_at":   datetime.now(timezone.utc).isoformat(),
     })
     events.sort(key=lambda e: e.get("datetime", ""))
     return save_events(events, sha)
+
 
 # ─── NOTIFICACIÓN ADMIN ───────────────────────────────────────────────────────
 async def notify_admin(context, event_data: dict, ok: bool):
@@ -233,12 +289,13 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     tg_file = await context.bot.get_file(photo.file_id)
     buf     = BytesIO()
     await tg_file.download_to_memory(buf)
-    event_data = extract_from_image(buf.getvalue(), msg.caption or "")
+    image_bytes = buf.getvalue()
+    event_data = extract_from_image(image_bytes, msg.caption or "")
     if not event_data:
         log.info("   → Sin evento reconocible, ignorando")
         return
     log.info(f"   → Evento en imagen: {event_data.get('title')}")
-    ok = add_event(event_data, source_id=f"img_{msg.message_id}")
+    ok = add_event(event_data, source_id=f"img_{msg.message_id}", image_bytes=image_bytes)
     await notify_admin(context, event_data, ok)
 
 # ─── SERVIDOR WEB (para que Render no duerma el servicio) ─────────────────────
@@ -257,12 +314,18 @@ def start_web_server():
     server.serve_forever()
 
 # ─── ARRANQUE ─────────────────────────────────────────────────────────────────
+async def daily_cleanup(context):
+    log.info("⏰ Limpieza diaria de imágenes...")
+    cleanup_past_images()
+
 def main():
     threading.Thread(target=start_web_server, daemon=True).start()
     log.info("🚇 Bot Agenda Tetuán arrancando...")
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
+    # Limpieza diaria a las 3:00 AM
+    app.job_queue.run_daily(daily_cleanup, time=datetime.strptime("03:00", "%H:%M").time())
     log.info(f"✅ Escuchando mensajes de {CHANNEL_USERNAME}")
     app.run_polling(allowed_updates=["channel_post", "message"])
 
