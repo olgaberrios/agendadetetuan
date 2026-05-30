@@ -47,7 +47,7 @@ if not TELEGRAM_TOKEN:
 log.info("Conectando con Gemini y GitHub...")
 try:
     genai.configure(api_key=GEMINI_API_KEY)
-    gemini = genai.GenerativeModel("gemini-1.5-flash")
+    gemini = genai.GenerativeModel("gemini-2.0-flash")
     log.info("  Gemini: OK")
 except Exception as e:
     log.error(f"  Gemini error: {e}")
