@@ -191,7 +191,7 @@ def upload_image_to_github(image_bytes: bytes, filename: str) -> str | None:
             repo.update_file(path, "Actualizar imagen", b64, existing.sha)
         except GithubException:
             repo.create_file(path, "Subir imagen de evento", b64)
-        raw_url = f"https://raw.githubusercontent.com/{GITHUB_REPO}/main/{path}"
+        raw_url = f"https://{GITHUB_REPO.split('/')[0]}.github.io/{GITHUB_REPO.split('/')[1]}/{path}"
         log.info(f"  Imagen subida: {raw_url}")
         return raw_url
     except Exception as e:
