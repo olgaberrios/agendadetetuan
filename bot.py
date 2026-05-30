@@ -268,4 +268,9 @@ async def main():
 
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(main())
+    import sys
+    try:
+        asyncio.run(main())
+    except Exception as e:
+        log.error(f"❌ Error fatal: {e}", exc_info=True)
+        sys.exit(1)
