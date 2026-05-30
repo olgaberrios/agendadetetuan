@@ -90,6 +90,17 @@
     "created_at": "2026-05-30T19:28:04.348595+00:00"
   },
   {
+    "id": "ea87a19c40",
+    "title": "Concert de Los Malpaso",
+    "datetime": "2026-06-05T19:00:00",
+    "end_datetime": "2026-06-05T20:30:00",
+    "location": "Centro Sociocultural Tetuán, Calle Bravo Murillo, 251 Madrid",
+    "description": "Música: 'Rock your heart out' A cargo de Los Malpaso. Grupo de rock amateur que versionan clásicos de grupos españoles, como Los Ronaldos, o Tequila y de grupos extranjeros como The Beatles, o The Rolling Stone. Duración: 90 min. Edad recomendada: todos los públicos. Gratuito Viernes, 5 de junio de 2026 a las 19 horas, Centro Sociocultural Tetuán, Calle Bravo Murillo, 251, Madrid.",
+    "image_url": "https://raw.githubusercontent.com/olgaberrios/agendadetetuan/main/images/ea87a19c40.jpg",
+    "source_id": "img_30",
+    "created_at": "2026-05-30T19:52:39.556825+00:00"
+  },
+  {
     "id": "a84a1a2f88",
     "title": "Los valientes andan solos",
     "datetime": "2026-06-06T19:00:00",
