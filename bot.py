@@ -17,6 +17,8 @@ import base64
 import hashlib
 import logging
 import re
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime, timezone
 from io import BytesIO
 
@@ -277,8 +279,27 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ok = add_event(event_data, source_id=f"img_{msg.message_id}")
     await notify_admin(context, event_data, ok)
 
+# ─── SERVIDOR WEB MÍNIMO (para que Render no duerma el servicio) ──────────────
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Bot Agenda Tetuan OK")
+    def log_message(self, format, *args):
+        pass  # silenciar logs del servidor web
+
+def start_web_server():
+    port = int(os.environ.get("PORT", 8080))
+    server = HTTPServer(("0.0.0.0", port), HealthHandler)
+    log.info(f"🌐 Servidor web en puerto {port}")
+    server.serve_forever()
+
 # ─── ARRANQUE ─────────────────────────────────────────────────────────────────
 def main():
+    # Arrancar servidor web en hilo separado
+    t = threading.Thread(target=start_web_server, daemon=True)
+    t.start()
+
     log.info("🚇 Bot Agenda Tetuán arrancando...")
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
