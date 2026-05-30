@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Bot Agenda Tetuán — usa Google Gemini (gratis) para leer texto e imágenes
+Bot Agenda Tetuán — usa OpenRouter (gratis) para leer texto e imágenes
 """
 
 import os
@@ -9,6 +9,7 @@ import base64
 import hashlib
 import logging
 import threading
+import requests as http_requests
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime, timezone
 from io import BytesIO
@@ -16,7 +17,6 @@ from io import BytesIO
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, MessageHandler, filters, ContextTypes
-import google.generativeai as genai
 from github import Github, GithubException
 
 load_dotenv()
@@ -26,33 +26,25 @@ log = logging.getLogger(__name__)
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
 log.info("Cargando configuracion...")
 
-TELEGRAM_TOKEN   = os.environ.get("TELEGRAM_TOKEN", "")
-GEMINI_API_KEY   = os.environ.get("GEMINI_API_KEY", "")
-GITHUB_TOKEN     = os.environ.get("GITHUB_TOKEN", "")
-GITHUB_REPO      = os.environ.get("GITHUB_REPO", "")
-CHANNEL_USERNAME = os.environ.get("CHANNEL_USERNAME", "@agendatetuan")
-EVENTS_JSON_PATH = "events.json"
-REVIEW_CHAT_ID   = os.environ.get("REVIEW_CHAT_ID")
+TELEGRAM_TOKEN    = os.environ.get("TELEGRAM_TOKEN", "")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+GITHUB_TOKEN      = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_REPO       = os.environ.get("GITHUB_REPO", "")
+CHANNEL_USERNAME  = os.environ.get("CHANNEL_USERNAME", "@agendatetuan")
+EVENTS_JSON_PATH  = "events.json"
+REVIEW_CHAT_ID    = os.environ.get("REVIEW_CHAT_ID")
 
-log.info(f"  TELEGRAM_TOKEN:  {'OK' if TELEGRAM_TOKEN else 'FALTA'}")
-log.info(f"  GEMINI_API_KEY:  {'OK' if GEMINI_API_KEY else 'FALTA'}")
-log.info(f"  GITHUB_TOKEN:    {'OK' if GITHUB_TOKEN else 'FALTA'}")
-log.info(f"  GITHUB_REPO:     {GITHUB_REPO if GITHUB_REPO else 'FALTA'}")
+log.info(f"  TELEGRAM_TOKEN:      {'OK' if TELEGRAM_TOKEN else 'FALTA'}")
+log.info(f"  OPENROUTER_API_KEY:  {'OK' if OPENROUTER_API_KEY else 'FALTA'}")
+log.info(f"  GITHUB_TOKEN:        {'OK' if GITHUB_TOKEN else 'FALTA'}")
+log.info(f"  GITHUB_REPO:         {GITHUB_REPO if GITHUB_REPO else 'FALTA'}")
 
 if not TELEGRAM_TOKEN:
     log.error("TELEGRAM_TOKEN no encontrado.")
     import sys; sys.exit(1)
 
-# ─── CLIENTES ─────────────────────────────────────────────────────────────────
-log.info("Conectando con Gemini y GitHub...")
-try:
-    genai.configure(api_key=GEMINI_API_KEY)
-    gemini = genai.GenerativeModel("gemini-2.0-flash")
-    log.info("  Gemini: OK")
-except Exception as e:
-    log.error(f"  Gemini error: {e}")
-    import sys; sys.exit(1)
-
+# ─── GITHUB ───────────────────────────────────────────────────────────────────
+log.info("Conectando con GitHub...")
 try:
     gh   = Github(GITHUB_TOKEN)
     repo = gh.get_repo(GITHUB_REPO)
@@ -83,12 +75,41 @@ Reglas:
 - Calcula fechas relativas como "este viernes" o "mañana" respecto a hoy.
 - Responde ÚNICAMENTE con el JSON."""
 
+# ─── LLAMADA A OPENROUTER ─────────────────────────────────────────────────────
+def call_openrouter(messages: list) -> str | None:
+    try:
+        resp = http_requests.post(
+            "https://openrouter.ai/api/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://agendatetuan.github.io",
+                "X-Title": "Agenda Tetuán Bot"
+            },
+            json={
+                "model": "meta-llama/llama-4-scout:free",
+                "messages": messages,
+                "max_tokens": 800
+            },
+            timeout=30
+        )
+        resp.raise_for_status()
+        return resp.json()["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        log.error(f"OpenRouter error: {e}")
+        return None
+
 # ─── EXTRAER EVENTO ───────────────────────────────────────────────────────────
 def extract_from_text(text: str) -> dict | None:
     try:
-        resp = gemini.generate_content(PROMPT + "\n\nMensaje:\n" + text)
-        raw  = resp.text.strip().replace("```json", "").replace("```", "").strip()
-        data = json.loads(raw)
+        raw = call_openrouter([
+            {"role": "system", "content": PROMPT},
+            {"role": "user", "content": text}
+        ])
+        if not raw:
+            return None
+        clean = raw.replace("```json", "").replace("```", "").strip()
+        data  = json.loads(clean)
         return data if data.get("es_evento") else None
     except Exception as e:
         log.error(f"Error extrayendo texto: {e}")
@@ -96,21 +117,29 @@ def extract_from_text(text: str) -> dict | None:
 
 def extract_from_image(image_bytes: bytes, caption: str = "") -> dict | None:
     try:
-        import PIL.Image
-        img  = PIL.Image.open(BytesIO(image_bytes))
-        prompt = PROMPT
+        b64  = base64.standard_b64encode(image_bytes).decode("utf-8")
+        text = PROMPT
         if caption:
-            prompt += f"\n\nTexto que acompaña la imagen: {caption}"
-        prompt += "\n\nAnaliza el cartel de la imagen y extrae el evento."
-        resp = gemini.generate_content([prompt, img])
-        raw  = resp.text.strip().replace("```json", "").replace("```", "").strip()
-        data = json.loads(raw)
+            text += f"\n\nTexto que acompaña la imagen: {caption}"
+        text += "\n\nAnaliza el cartel y extrae el evento."
+
+        raw = call_openrouter([
+            {"role": "system", "content": PROMPT},
+            {"role": "user", "content": [
+                {"type": "text", "text": text},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}}
+            ]}
+        ])
+        if not raw:
+            return None
+        clean = raw.replace("```json", "").replace("```", "").strip()
+        data  = json.loads(clean)
         return data if data.get("es_evento") else None
     except Exception as e:
         log.error(f"Error extrayendo imagen: {e}")
         return None
 
-# ─── GITHUB ───────────────────────────────────────────────────────────────────
+# ─── GITHUB: LEER Y ESCRIBIR events.json ─────────────────────────────────────
 def load_events() -> tuple[list, str]:
     try:
         f = repo.get_contents(EVENTS_JSON_PATH)
