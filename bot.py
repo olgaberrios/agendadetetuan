@@ -87,7 +87,7 @@ def call_openrouter(messages: list) -> str | None:
                 "X-Title": "Agenda Tetuán Bot"
             },
             json={
-                "model": "openrouter/free",
+                "model": "qwen/qwen2.5-vl-72b-instruct:free",
                 "messages": messages,
                 "max_tokens": 800
             },
