@@ -87,7 +87,7 @@ def call_openrouter(messages: list) -> str | None:
                 "X-Title": "Agenda Tetuán Bot"
             },
             json={
-                "model": "meta-llama/llama-3.1-8b-instruct:free",
+                "model": "openrouter/free",
                 "messages": messages,
                 "max_tokens": 800
             },
