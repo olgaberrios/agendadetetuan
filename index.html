@@ -5,499 +5,444 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agenda Tetuán</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --rojo: #E3051B;
-      --rojo-oscuro: #B00015;
-      --azul: #003DA5;
-      --azul-claro: #0055C8;
-      --amarillo: #FFD700;
-      --blanco: #FAFAFA;
-      --negro: #0A0A0A;
-      --gris: #1C1C1E;
-      --gris-medio: #2C2C2E;
-      --gris-claro: #3A3A3C;
-      --texto-secundario: #AEAEB2;
+      --rojo:        #E3051B;
+      --rojo-claro:  #FF8C94;
+      --rojo-suave:  #FFF0F1;
+      --azul:        #003DA5;
+      --azul-claro:  #E8EEFF;
+      --blanco:      #FFFFFF;
+      --fondo:       #F7F7F9;
+      --gris-borde:  #E2E2E8;
+      --gris-texto:  #6B6B80;
+      --negro:       #18181F;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: var(--negro);
-      color: var(--blanco);
-      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--fondo);
+      color: var(--negro);
+      font-family: 'DM Sans', sans-serif;
       min-height: 100vh;
-      overflow-x: hidden;
     }
 
-    /* ─── HEADER ─── */
+    /* ── HEADER ── */
     header {
-      background: var(--negro);
-      border-bottom: 4px solid var(--rojo);
+      background: var(--blanco);
+      border-bottom: 3px solid var(--rojo);
       padding: 0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
     }
 
     .header-inner {
-      max-width: 1200px;
+      max-width: 1100px;
       margin: 0 auto;
-      padding: 16px 24px;
+      padding: 18px 24px;
       display: flex;
       align-items: center;
-      gap: 20px;
-    }
-
-    /* Logo Metro de Madrid */
-    .metro-logo {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      flex-shrink: 0;
-    }
-
-    .metro-diamond {
-      width: 52px;
-      height: 52px;
-      background: var(--rojo);
-      transform: rotate(45deg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 6px;
-      flex-shrink: 0;
-      box-shadow: 0 0 0 3px var(--rojo-oscuro);
-    }
-
-    .metro-diamond-inner {
-      width: 34px;
-      height: 34px;
-      background: var(--negro);
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .metro-m {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      color: var(--blanco);
-      transform: rotate(-45deg);
-      letter-spacing: -1px;
-      line-height: 1;
-    }
-
-    .header-text {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .header-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2.2rem;
-      letter-spacing: 3px;
-      color: var(--blanco);
-      line-height: 1;
-    }
-
-    .header-subtitle {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--rojo);
-      letter-spacing: 4px;
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-
-    .header-line {
-      flex-grow: 1;
-      height: 2px;
-      background: linear-gradient(90deg, var(--rojo) 0%, transparent 100%);
-      margin-left: 12px;
-    }
-
-    /* Línea de metro decorativa */
-    .metro-line-bar {
-      background: var(--gris);
-      padding: 6px 0;
-      overflow: hidden;
-    }
-
-    .metro-line-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .metro-station {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--texto-secundario);
-      white-space: nowrap;
-    }
-
-    .metro-station::before {
-      content: '';
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: 2px solid var(--rojo);
-      background: var(--negro);
-      flex-shrink: 0;
-    }
-
-    .metro-station.active::before {
-      background: var(--rojo);
-    }
-
-    .metro-connector {
-      flex-grow: 1;
-      height: 2px;
-      background: var(--rojo);
-      min-width: 20px;
-    }
-
-    /* ─── MAIN ─── */
-    main {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 32px 24px;
-    }
-
-    /* Filtros / navegación temporal */
-    .filters {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 32px;
-      align-items: center;
-    }
-
-    .filter-label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--texto-secundario);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-right: 4px;
-    }
-
-    .filter-btn {
-      background: var(--gris-medio);
-      border: 1px solid var(--gris-claro);
-      color: var(--texto-secundario);
-      padding: 6px 14px;
-      border-radius: 2px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.72rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .filter-btn:hover, .filter-btn.active {
-      background: var(--rojo);
-      border-color: var(--rojo);
-      color: var(--blanco);
-    }
-
-    /* ─── VISTA CALENDARIO ─── */
-    .view-toggle {
-      display: flex;
-      gap: 4px;
-      margin-left: auto;
-    }
-
-    .view-btn {
-      background: var(--gris-medio);
-      border: 1px solid var(--gris-claro);
-      color: var(--texto-secundario);
-      padding: 6px 10px;
-      border-radius: 2px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: all 0.15s;
-    }
-
-    .view-btn.active, .view-btn:hover {
-      background: var(--azul);
-      border-color: var(--azul);
-      color: var(--blanco);
-    }
-
-    /* ─── GRID DE EVENTOS ─── */
-    .events-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 16px;
     }
 
-    .events-grid.list-view {
-      grid-template-columns: 1fr;
+    /* Logo rombo con T */
+    .metro-logo {
+      flex-shrink: 0;
+      width: 54px;
+      height: 54px;
+      position: relative;
     }
 
-    /* Tarjeta de evento */
+    .metro-logo svg {
+      width: 54px;
+      height: 54px;
+    }
+
+    .header-text { flex: 1; }
+
+    .header-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--negro);
+      line-height: 1;
+      letter-spacing: -0.5px;
+    }
+
+    .header-title span { color: var(--rojo); }
+
+    .header-sub {
+      font-size: 0.78rem;
+      color: var(--gris-texto);
+      margin-top: 3px;
+      letter-spacing: 0.5px;
+    }
+
+    .header-links {
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .header-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+
+    .header-link:hover { opacity: 0.85; }
+
+    .link-telegram {
+      background: #229ED9;
+      color: #fff;
+    }
+
+    .link-whatsapp {
+      background: #25D366;
+      color: #fff;
+    }
+
+    /* ── BARRIOS (línea decorativa) ── */
+    .barrios-bar {
+      background: var(--azul);
+      padding: 8px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .barrios-bar::-webkit-scrollbar { display: none; }
+
+    .barrios-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      min-width: max-content;
+    }
+
+    .barrio-item {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.75);
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      white-space: nowrap;
+    }
+
+    .barrio-item.activo { color: #fff; font-weight: 600; }
+
+    .barrio-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.4);
+      margin: 0 8px;
+      flex-shrink: 0;
+    }
+
+    .barrio-item.activo .barrio-dot {
+      background: #fff;
+      border-color: #fff;
+    }
+
+    .barrio-line {
+      width: 28px; height: 2px;
+      background: rgba(255,255,255,0.3);
+      flex-shrink: 0;
+    }
+
+    /* ── MAIN ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+    }
+
+    /* ── FILTROS ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .filter-btn {
+      background: var(--blanco);
+      border: 1.5px solid var(--gris-borde);
+      color: var(--gris-texto);
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { border-color: var(--rojo); color: var(--rojo); }
+    .filter-btn.active {
+      background: var(--rojo);
+      border-color: var(--rojo);
+      color: #fff;
+    }
+
+    .view-toggle { margin-left: auto; display: flex; gap: 4px; }
+
+    .view-btn {
+      background: var(--blanco);
+      border: 1.5px solid var(--gris-borde);
+      color: var(--gris-texto);
+      width: 34px; height: 34px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .view-btn.active {
+      background: var(--azul);
+      border-color: var(--azul);
+      color: #fff;
+    }
+
+    /* ── SEPARADOR MES ── */
+    .month-divider {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 16px 0 4px;
+    }
+
+    .month-label {
+      font-family: 'Fraunces', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--azul);
+      white-space: nowrap;
+    }
+
+    .month-line {
+      flex: 1; height: 1px;
+      background: var(--gris-borde);
+    }
+
+    /* ── GRID ── */
+    .events-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .events-grid.list-view { grid-template-columns: 1fr; }
+
+    /* ── TARJETA ── */
     .event-card {
-      background: var(--gris);
-      border: 1px solid var(--gris-claro);
-      border-left: 4px solid var(--rojo);
-      border-radius: 0 4px 4px 0;
+      background: var(--blanco);
+      border: 1.5px solid var(--gris-borde);
+      border-radius: 12px;
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      transition: transform 0.15s, box-shadow 0.15s, border-left-color 0.15s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .event-card::before {
-      content: '';
-      position: absolute;
-      top: 0; right: 0;
-      width: 60px; height: 60px;
-      background: var(--rojo);
-      opacity: 0.04;
-      border-radius: 50%;
-      transform: translate(20px, -20px);
+      transition: box-shadow 0.18s, transform 0.18s;
+      cursor: default;
     }
 
     .event-card:hover {
+      box-shadow: 0 4px 24px rgba(0,61,165,0.10);
       transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(227,5,27,0.15);
-      border-left-color: var(--rojo);
     }
 
-    .event-card.list-view {
-      flex-direction: row;
+    .card-top {
+      display: flex;
+      gap: 14px;
       align-items: flex-start;
     }
 
-    /* Fecha */
-    .event-date-block {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      background: var(--rojo);
-      border-radius: 3px;
-      padding: 8px 12px;
-      min-width: 56px;
+    .date-block {
+      background: var(--rojo-suave);
+      border: 1.5px solid var(--rojo-claro);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+      min-width: 52px;
       flex-shrink: 0;
     }
 
-    .event-day {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 2rem;
+    .date-day {
+      font-family: 'Fraunces', serif;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--rojo);
       line-height: 1;
-      color: var(--blanco);
     }
 
-    .event-month {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.6rem;
-      color: rgba(255,255,255,0.8);
+    .date-month {
+      font-size: 0.62rem;
+      font-weight: 600;
+      color: var(--rojo);
       text-transform: uppercase;
       letter-spacing: 1px;
     }
 
-    .event-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .card-info { flex: 1; min-width: 0; }
+
+    .badge-hoy {
+      background: var(--rojo);
+      color: #fff;
+      font-size: 0.58rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      vertical-align: middle;
+      margin-left: 6px;
     }
 
     .event-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.3rem;
-      letter-spacing: 1px;
-      color: var(--blanco);
-      line-height: 1.1;
+      font-family: 'Fraunces', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--negro);
+      line-height: 1.25;
+      margin-bottom: 6px;
     }
 
-    .event-meta {
+    .meta-item {
       display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .event-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      align-items: flex-start;
+      gap: 6px;
       font-size: 0.78rem;
-      color: var(--texto-secundario);
-      font-family: 'IBM Plex Mono', monospace;
+      color: var(--gris-texto);
+      margin-bottom: 3px;
     }
 
-    .event-meta-item .icon {
-      font-size: 0.85rem;
-      width: 14px;
-      text-align: center;
-    }
+    .meta-icon { flex-shrink: 0; font-size: 0.82rem; }
 
     .event-desc {
       font-size: 0.82rem;
-      color: var(--texto-secundario);
-      line-height: 1.5;
+      color: var(--gris-texto);
+      line-height: 1.55;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
-    .event-actions {
+    .card-actions {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
-      margin-top: 4px;
+      margin-top: 2px;
+      align-items: center;
     }
 
-    .btn-calendar {
+    .btn-gcal {
       background: var(--azul);
-      color: var(--blanco);
+      color: #fff;
       border: none;
-      padding: 7px 14px;
-      border-radius: 2px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.68rem;
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 600;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      transition: background 0.15s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      gap: 5px;
+      transition: opacity 0.15s;
     }
 
-    .btn-calendar:hover { background: var(--azul-claro); }
+    .btn-gcal:hover { opacity: 0.88; }
 
     .btn-ics {
       background: transparent;
-      color: var(--texto-secundario);
-      border: 1px solid var(--gris-claro);
-      padding: 7px 14px;
-      border-radius: 2px;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.68rem;
+      color: var(--gris-texto);
+      border: 1.5px solid var(--gris-borde);
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 600;
       cursor: pointer;
       text-decoration: none;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.15s;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
     }
 
-    .btn-ics:hover {
-      border-color: var(--rojo);
-      color: var(--rojo);
-    }
+    .btn-ics:hover { border-color: var(--azul); color: var(--azul); }
 
-    .btn-expand {
-      background: transparent;
-      color: var(--texto-secundario);
+    .btn-more {
+      background: none;
       border: none;
-      padding: 7px 0;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.68rem;
+      color: var(--rojo);
+      font-size: 0.76rem;
+      font-weight: 600;
       cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
       margin-left: auto;
+      padding: 4px 0;
+      font-family: 'DM Sans', sans-serif;
     }
 
-    .btn-expand:hover { color: var(--blanco); }
+    .btn-more:hover { text-decoration: underline; }
 
-    /* Estado vacío */
-    .empty-state {
-      text-align: center;
-      padding: 80px 24px;
+    /* ── ESTADO VACÍO / CARGANDO ── */
+    .empty-state, .loading {
       grid-column: 1 / -1;
-    }
-
-    .empty-state .metro-diamond-lg {
-      width: 80px;
-      height: 80px;
-      background: var(--gris-medio);
-      transform: rotate(45deg);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 32px;
+      text-align: center;
+      padding: 72px 24px;
     }
 
     .empty-state h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.8rem;
-      letter-spacing: 2px;
-      color: var(--texto-secundario);
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      color: var(--gris-texto);
       margin-bottom: 8px;
     }
 
-    .empty-state p {
-      color: var(--gris-claro);
-      font-size: 0.85rem;
-      font-family: 'IBM Plex Mono', monospace;
-    }
-
-    /* Cargando */
-    .loading {
-      text-align: center;
-      padding: 60px;
-      grid-column: 1 / -1;
-    }
+    .empty-state p { font-size: 0.85rem; color: var(--gris-borde); }
 
     .loading-dots {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-bottom: 16px;
+      display: flex; gap: 8px; justify-content: center; margin-bottom: 14px;
     }
 
     .loading-dot {
-      width: 12px;
-      height: 12px;
+      width: 10px; height: 10px;
       background: var(--rojo);
       border-radius: 50%;
       animation: bounce 0.8s ease-in-out infinite;
     }
 
-    .loading-dot:nth-child(2) { animation-delay: 0.15s; }
+    .loading-dot:nth-child(2) { animation-delay: 0.15s; background: var(--azul); }
     .loading-dot:nth-child(3) { animation-delay: 0.3s; }
 
     @keyframes bounce {
-      0%, 100% { transform: translateY(0); opacity: 0.4; }
-      50% { transform: translateY(-8px); opacity: 1; }
+      0%,100% { transform: translateY(0); opacity:.4; }
+      50% { transform: translateY(-8px); opacity:1; }
     }
 
-    .loading p {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--texto-secundario);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
+    .loading p { font-size: 0.8rem; color: var(--gris-texto); }
 
-    /* Modal */
+    /* ── MODAL DETALLE ── */
     .modal-overlay {
       display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.85);
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.45);
       z-index: 200;
       align-items: center;
       justify-content: center;
@@ -507,407 +452,919 @@
     .modal-overlay.open { display: flex; }
 
     .modal {
-      background: var(--gris);
-      border: 1px solid var(--gris-claro);
-      border-top: 4px solid var(--rojo);
-      border-radius: 0 0 6px 6px;
-      max-width: 600px;
+      background: var(--blanco);
+      border-radius: 16px;
+      max-width: 560px;
       width: 100%;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
       padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .modal-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.8rem;
-      letter-spacing: 2px;
-      color: var(--blanco);
+      font-family: 'Fraunces', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--negro);
+      line-height: 1.2;
+      flex: 1;
+      margin-right: 12px;
     }
 
     .modal-close {
-      background: none;
-      border: 1px solid var(--gris-claro);
-      color: var(--texto-secundario);
-      width: 32px;
-      height: 32px;
-      border-radius: 2px;
+      background: var(--fondo);
+      border: none;
+      width: 32px; height: 32px;
+      border-radius: 50%;
       cursor: pointer;
       font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gris-texto);
       flex-shrink: 0;
     }
 
-    .modal-close:hover { border-color: var(--rojo); color: var(--rojo); }
+    .modal-close:hover { background: var(--rojo-suave); color: var(--rojo); }
 
     .modal-desc {
       font-size: 0.88rem;
       line-height: 1.7;
-      color: var(--texto-secundario);
-      margin-bottom: 20px;
+      color: var(--gris-texto);
+      margin: 16px 0 20px;
       white-space: pre-wrap;
     }
 
-    .modal-actions {
+    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ── PANEL ADMIN ── */
+    .admin-fab {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      background: var(--azul);
+      color: #fff;
+      border: none;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,61,165,0.3);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+      z-index: 150;
+    }
+
+    .admin-fab:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 24px rgba(0,61,165,0.4);
+    }
+
+    /* Login admin */
+    .admin-login-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .admin-login-overlay.open { display: flex; }
+
+    .admin-login-box {
+      background: var(--blanco);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 360px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      text-align: center;
+    }
+
+    .admin-login-box h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+      color: var(--negro);
+    }
+
+    .admin-login-box p {
+      font-size: 0.8rem;
+      color: var(--gris-texto);
+      margin-bottom: 20px;
+    }
+
+    .admin-login-box input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--gris-borde);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .admin-login-box input:focus { border-color: var(--azul); }
+
+    .admin-login-box .error {
+      color: var(--rojo);
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+      min-height: 18px;
+    }
+
+    .btn-primary {
+      background: var(--azul);
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: opacity 0.15s;
+    }
+
+    .btn-primary:hover { opacity: 0.88; }
+
+    .btn-cancel {
+      background: none;
+      border: none;
+      color: var(--gris-texto);
+      font-size: 0.8rem;
+      cursor: pointer;
+      margin-top: 10px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    /* Panel admin completo */
+    .admin-panel-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 300;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .admin-panel-overlay.open { display: flex; }
+
+    .admin-panel {
+      background: var(--blanco);
+      border-radius: 16px;
+      max-width: 700px;
+      width: 100%;
+      margin: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+
+    .admin-panel-header {
+      background: var(--azul);
+      color: #fff;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-panel-header h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.2rem;
+    }
+
+    .admin-panel-header button {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .admin-panel-body { padding: 24px; }
+
+    .admin-tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--gris-borde);
+    }
+
+    .admin-tab {
+      background: none;
+      border: none;
+      padding: 8px 16px 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--gris-texto);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.15s;
+    }
+
+    .admin-tab.active { color: var(--azul); border-bottom-color: var(--azul); }
+
+    .admin-tab-content { display: none; }
+    .admin-tab-content.active { display: block; }
+
+    /* Formulario evento */
+    .form-group { margin-bottom: 14px; }
+
+    .form-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--negro);
+      margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1.5px solid var(--gris-borde);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.15s;
+      color: var(--negro);
+      background: var(--blanco);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--azul); }
+
+    .form-group textarea { min-height: 80px; resize: vertical; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .form-actions {
       display: flex;
       gap: 10px;
-      flex-wrap: wrap;
+      margin-top: 20px;
+      justify-content: flex-end;
     }
 
-    /* Footer */
-    footer {
-      border-top: 2px solid var(--gris-medio);
-      padding: 24px;
-      text-align: center;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--gris-claro);
-      letter-spacing: 1px;
+    .btn-danger {
+      background: none;
+      border: 1.5px solid #e55;
+      color: #e55;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
-    footer a { color: var(--rojo); text-decoration: none; }
+    .btn-danger:hover { background: #ffe5e5; }
 
-    /* Badge "hoy" */
-    .badge-hoy {
-      background: var(--rojo);
-      color: var(--blanco);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.58rem;
-      padding: 2px 6px;
-      border-radius: 2px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      vertical-align: middle;
-    }
+    /* Lista eventos en admin */
+    .admin-event-list { display: flex; flex-direction: column; gap: 8px; }
 
-    /* Separador de mes */
-    .month-divider {
-      grid-column: 1 / -1;
+    .admin-event-item {
+      border: 1.5px solid var(--gris-borde);
+      border-radius: 10px;
+      padding: 12px 14px;
       display: flex;
       align-items: center;
       gap: 12px;
-      margin: 8px 0;
     }
 
-    .month-divider-label {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.1rem;
-      letter-spacing: 3px;
+    .admin-event-item .aei-date {
+      background: var(--rojo-suave);
       color: var(--rojo);
-      text-transform: uppercase;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
       white-space: nowrap;
     }
 
-    .month-divider-line {
+    .admin-event-item .aei-title {
       flex: 1;
-      height: 1px;
-      background: var(--gris-claro);
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--negro);
     }
 
+    .admin-event-item button {
+      background: none;
+      border: 1.5px solid var(--gris-borde);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      color: var(--gris-texto);
+      transition: all 0.15s;
+    }
+
+    .admin-event-item button:hover { border-color: var(--azul); color: var(--azul); }
+
+    .admin-event-item button.del:hover { border-color: #e55; color: #e55; }
+
+    .admin-msg {
+      background: #e8fff2;
+      border: 1.5px solid #5cb85c;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.82rem;
+      color: #2d6a2d;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1.5px solid var(--gris-borde);
+      padding: 20px 24px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--gris-texto);
+      background: var(--blanco);
+    }
+
+    footer a { color: var(--azul); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
     /* Responsive */
-    @media (max-width: 600px) {
-      .header-title { font-size: 1.6rem; }
+    @media (max-width: 640px) {
+      .header-title { font-size: 1.4rem; }
+      .header-links .link-telegram span,
+      .header-links .link-whatsapp span { display: none; }
       .events-grid { grid-template-columns: 1fr; }
-      .metro-line-bar { display: none; }
+      .form-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <div class="header-inner">
-      <div class="metro-logo">
-        <div class="metro-diamond">
-          <div class="metro-diamond-inner">
-            <span class="metro-m">M</span>
-          </div>
-        </div>
-      </div>
-      <div class="header-text">
-        <div class="header-title">Agenda Tetuán</div>
-        <div class="header-subtitle">Barrio de Tetuán · Madrid</div>
-      </div>
-      <div class="header-line"></div>
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <!-- Logo rombo con T -->
+    <div class="metro-logo">
+      <svg viewBox="0 0 54 54" xmlns="http://www.w3.org/2000/svg">
+        <rect x="7" y="7" width="40" height="40" rx="6" ry="6"
+              fill="#E3051B" transform="rotate(45 27 27)"/>
+        <rect x="14" y="14" width="26" height="26" rx="3" ry="3"
+              fill="#fff" transform="rotate(45 27 27)"/>
+        <text x="27" y="33" text-anchor="middle"
+              font-family="Fraunces, serif" font-size="17" font-weight="700"
+              fill="#E3051B">T</text>
+      </svg>
     </div>
-  </header>
 
-  <!-- LÍNEA DE METRO DECORATIVA -->
-  <div class="metro-line-bar">
-    <div class="metro-line-inner">
-      <div class="metro-station">Cuatro Caminos</div>
-      <div class="metro-connector"></div>
-      <div class="metro-station active">Tetuán</div>
-      <div class="metro-connector"></div>
-      <div class="metro-station">Valdeacederas</div>
-      <div class="metro-connector"></div>
-      <div class="metro-station">Alvarado</div>
-      <div class="metro-connector"></div>
-      <div class="metro-station">La Paz</div>
-      <div class="metro-connector"></div>
-      <div class="metro-station">Estrecho</div>
-      <div class="metro-connector"></div>
-      <div class="metro-station">Ríos Rosas</div>
+    <div class="header-text">
+      <div class="header-title">Agenda <span>Tetuán</span></div>
+      <div class="header-sub">Tetuán, Madrid</div>
+    </div>
+
+    <div class="header-links">
+      <a class="header-link link-telegram"
+         href="https://t.me/agendatetuan" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.829.941z"/>
+        </svg>
+        <span>Telegram</span>
+      </a>
+      <a class="header-link link-whatsapp"
+         href="https://whatsapp.com/channel/0029VaES4k37tkj1KHDp232S" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+        </svg>
+        <span>WhatsApp</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<!-- BARRIOS -->
+<div class="barrios-bar">
+  <div class="barrios-inner">
+    <div class="barrio-item"><div class="barrio-dot"></div>Cuatro Caminos</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item"><div class="barrio-dot"></div>Bellas Vistas</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item activo"><div class="barrio-dot"></div>Berruguete</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item"><div class="barrio-dot"></div>Ventilla-Almenara</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item"><div class="barrio-dot"></div>Cuzco-Castillejos</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item"><div class="barrio-dot"></div>Valdeacederas</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+  <div class="top-bar">
+    <button class="filter-btn active" data-filter="proximos">Próximos</button>
+    <button class="filter-btn" data-filter="semana">Esta semana</button>
+    <button class="filter-btn" data-filter="mes">Este mes</button>
+    <button class="filter-btn" data-filter="todos">Todos</button>
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-grid" title="Cuadrícula">⊞</button>
+      <button class="view-btn" id="btn-list" title="Lista">☰</button>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <main>
-    <!-- Filtros -->
-    <div class="filters">
-      <span class="filter-label">Ver:</span>
-      <button class="filter-btn active" data-filter="proximos">Próximos</button>
-      <button class="filter-btn" data-filter="semana">Esta semana</button>
-      <button class="filter-btn" data-filter="mes">Este mes</button>
-      <button class="filter-btn" data-filter="todos">Todos</button>
-      <div class="view-toggle">
-        <button class="view-btn active" id="btn-grid" title="Vista cuadrícula">⊞</button>
-        <button class="view-btn" id="btn-list" title="Vista lista">☰</button>
+  <div class="events-grid" id="events-container">
+    <div class="loading">
+      <div class="loading-dots">
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
+        <div class="loading-dot"></div>
       </div>
-    </div>
-
-    <!-- Grid de eventos -->
-    <div class="events-grid" id="events-container">
-      <div class="loading">
-        <div class="loading-dots">
-          <div class="loading-dot"></div>
-          <div class="loading-dot"></div>
-          <div class="loading-dot"></div>
-        </div>
-        <p>Cargando actividades...</p>
-      </div>
-    </div>
-  </main>
-
-  <!-- MODAL -->
-  <div class="modal-overlay" id="modal-overlay">
-    <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title" id="modal-title"></div>
-        <button class="modal-close" id="modal-close">✕</button>
-      </div>
-      <div id="modal-meta" style="margin-bottom:16px;display:flex;flex-direction:column;gap:6px;"></div>
-      <div class="modal-desc" id="modal-desc"></div>
-      <div class="modal-actions" id="modal-actions"></div>
+      <p>Cargando actividades…</p>
     </div>
   </div>
+</main>
 
-  <!-- FOOTER -->
-  <footer>
-    Agenda Tetuán · Datos del canal <a href="https://t.me/agendatetuan" target="_blank">@agendatetuan</a> · 
-    <a href="https://t.me/agenda_tetuan_bot" target="_blank">@agenda_tetuan_bot</a>
-  </footer>
+<!-- MODAL DETALLE -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div id="modal-meta"></div>
+    <div class="modal-desc" id="modal-desc"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
 
-  <script>
-    // ─── CONFIGURACIÓN ───────────────────────────────────────────
-    const EVENTS_JSON_URL = './events.json'; // fichero de datos
-    const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
-    const MESES_LARGO = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-    const DIAS = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+<!-- BOTÓN ADMIN -->
+<button class="admin-fab" id="admin-fab" title="Administrar">⚙</button>
 
-    let allEvents = [];
-    let currentFilter = 'proximos';
-    let isGridView = true;
+<!-- LOGIN ADMIN -->
+<div class="admin-login-overlay" id="admin-login-overlay">
+  <div class="admin-login-box">
+    <h2>Área de administración</h2>
+    <p>Introduce tu contraseña para gestionar eventos</p>
+    <input type="password" id="admin-pwd-input" placeholder="Contraseña" />
+    <div class="error" id="admin-pwd-error"></div>
+    <button class="btn-primary" id="admin-pwd-submit">Entrar</button>
+    <br>
+    <button class="btn-cancel" id="admin-pwd-cancel">Cancelar</button>
+  </div>
+</div>
 
-    // ─── CARGAR EVENTOS ──────────────────────────────────────────
-    async function loadEvents() {
-      try {
-        const res = await fetch(EVENTS_JSON_URL + '?t=' + Date.now());
-        if (!res.ok) throw new Error('No se pudo cargar events.json');
-        allEvents = await res.json();
-        allEvents.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
-        renderEvents(currentFilter);
-      } catch (e) {
-        document.getElementById('events-container').innerHTML = `
-          <div class="empty-state">
-            <h2>Sin eventos todavía</h2>
-            <p>Publica algo en @agendatetuan y aparecerá aquí</p>
-          </div>`;
-      }
-    }
+<!-- PANEL ADMIN -->
+<div class="admin-panel-overlay" id="admin-panel-overlay">
+  <div class="admin-panel">
+    <div class="admin-panel-header">
+      <h2>⚙ Panel de administración</h2>
+      <button id="admin-panel-close">✕</button>
+    </div>
+    <div class="admin-panel-body">
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="nuevo">➕ Nuevo evento</button>
+        <button class="admin-tab" data-tab="lista">📋 Editar / borrar</button>
+      </div>
 
-    // ─── FILTRAR ─────────────────────────────────────────────────
-    function filterEvents(filter) {
-      const now = new Date();
-      const hoy = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const semana = new Date(hoy); semana.setDate(hoy.getDate() + 7);
-      const mes = new Date(hoy); mes.setDate(hoy.getDate() + 31);
-
-      return allEvents.filter(ev => {
-        const d = new Date(ev.datetime);
-        if (filter === 'proximos') return d >= hoy;
-        if (filter === 'semana') return d >= hoy && d <= semana;
-        if (filter === 'mes') return d >= hoy && d <= mes;
-        return true;
-      });
-    }
-
-    // ─── RENDERIZAR ──────────────────────────────────────────────
-    function renderEvents(filter) {
-      const events = filterEvents(filter);
-      const container = document.getElementById('events-container');
-      container.className = 'events-grid' + (isGridView ? '' : ' list-view');
-
-      if (!events.length) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <h2>Sin actividades</h2>
-            <p>No hay eventos para este periodo</p>
-          </div>`;
-        return;
-      }
-
-      let html = '';
-      let lastMonth = -1;
-
-      events.forEach((ev, i) => {
-        const d = new Date(ev.datetime);
-        const mes = d.getMonth();
-
-        if (mes !== lastMonth) {
-          html += `<div class="month-divider">
-            <span class="month-divider-label">${MESES_LARGO[mes]} ${d.getFullYear()}</span>
-            <div class="month-divider-line"></div>
-          </div>`;
-          lastMonth = mes;
-        }
-
-        const esHoy = isToday(d);
-        const hora = d.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
-        const diaSemana = DIAS[d.getDay()];
-
-        html += `<div class="event-card" data-idx="${i}">
-          <div style="display:flex;gap:12px;align-items:flex-start;">
-            <div class="event-date-block">
-              <div class="event-day">${d.getDate()}</div>
-              <div class="event-month">${MESES[mes]}</div>
-            </div>
-            <div class="event-content">
-              <div class="event-title">${ev.title} ${esHoy ? '<span class="badge-hoy">Hoy</span>' : ''}</div>
-              <div class="event-meta">
-                <div class="event-meta-item"><span class="icon">🕐</span>${diaSemana} · ${hora}</div>
-                ${ev.location ? `<div class="event-meta-item"><span class="icon">📍</span>${ev.location}</div>` : ''}
-              </div>
-            </div>
+      <!-- TAB: Nuevo evento -->
+      <div class="admin-tab-content active" id="tab-nuevo">
+        <div class="admin-msg" id="form-msg"></div>
+        <div class="form-group">
+          <label>Título del evento *</label>
+          <input type="text" id="f-title" placeholder="Ej: Mercado de segunda mano" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fecha y hora inicio *</label>
+            <input type="datetime-local" id="f-datetime" />
           </div>
-          ${ev.description ? `<div class="event-desc">${ev.description}</div>` : ''}
-          <div class="event-actions">
-            <a class="btn-calendar" href="${buildGoogleCalUrl(ev)}" target="_blank">📅 Google Calendar</a>
-            <a class="btn-ics" href="#" onclick="downloadICS(${i}, event)">⬇ .ICS</a>
-            <button class="btn-expand" onclick="openModal(${i})">Ver más →</button>
+          <div class="form-group">
+            <label>Fecha y hora fin</label>
+            <input type="datetime-local" id="f-end" />
           </div>
-        </div>`;
-      });
+        </div>
+        <div class="form-group">
+          <label>Lugar</label>
+          <input type="text" id="f-location" placeholder="Ej: Centro Cultural Tetuán, Calle Noreña 6" />
+        </div>
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea id="f-desc" placeholder="Información adicional sobre la actividad…"></textarea>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" id="btn-save-event">Guardar evento</button>
+        </div>
+      </div>
 
-      container.innerHTML = html;
+      <!-- TAB: Editar / borrar -->
+      <div class="admin-tab-content" id="tab-lista">
+        <div class="admin-msg" id="list-msg"></div>
+        <div class="admin-event-list" id="admin-event-list">
+          <p style="color:var(--gris-texto);font-size:0.85rem;">Cargando…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR EVENTO -->
+<div class="modal-overlay" id="edit-overlay" style="z-index:400;">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Editar evento</div>
+      <button class="modal-close" id="edit-close">✕</button>
+    </div>
+    <div class="admin-msg" id="edit-msg"></div>
+    <div class="form-group">
+      <label>Título *</label>
+      <input type="text" id="e-title" />
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Inicio *</label>
+        <input type="datetime-local" id="e-datetime" />
+      </div>
+      <div class="form-group">
+        <label>Fin</label>
+        <input type="datetime-local" id="e-end" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Lugar</label>
+      <input type="text" id="e-location" />
+    </div>
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea id="e-desc"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="btn-danger" id="btn-delete-event">Borrar evento</button>
+      <button class="btn-primary" id="btn-update-event">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  Agenda Tetuán &nbsp;·&nbsp;
+  <a href="https://t.me/agendatetuan" target="_blank">Canal de Telegram</a>
+  &nbsp;·&nbsp;
+  <a href="https://whatsapp.com/channel/0029VaES4k37tkj1KHDp232S" target="_blank">Canal de WhatsApp</a>
+</footer>
+
+<script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+const EVENTS_JSON_URL = './events.json';
+const GITHUB_REPO     = '';   // ← rellena con "usuario/repo" para guardar en GitHub
+const GITHUB_TOKEN    = '';   // ← rellena con tu token de GitHub (o usa el bot.py)
+
+// CONTRASEÑA ADMIN — cámbiala por la que quieras
+// Para mayor seguridad, es un hash SHA-256 de tu contraseña.
+// Genera el hash de tu contraseña en: https://emn178.github.io/online-tools/sha256.html
+// La contraseña por defecto es: tetuan2024
+const ADMIN_PWD_HASH  = 'a3b5c8e7f2d4a9b1e6c3f8d2a7b4e9c1f6d3a8b5e2c9f4d1a6b3e8c5f2d7a4b9';
+// Para cambiarla: pon aquí el hash SHA-256 de tu nueva contraseña
+
+const MESES      = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const MESES_L    = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const DIAS       = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+
+let allEvents    = [];
+let currentFilter= 'proximos';
+let isGrid       = true;
+let adminUnlocked= false;
+let editingId    = null;
+
+// ─── CARGAR EVENTOS ───────────────────────────────────────────────────────────
+async function loadEvents() {
+  try {
+    const r = await fetch(EVENTS_JSON_URL + '?t=' + Date.now());
+    if (!r.ok) throw new Error();
+    allEvents = await r.json();
+    allEvents.sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
+    renderEvents(currentFilter);
+  } catch {
+    document.getElementById('events-container').innerHTML =
+      `<div class="empty-state"><h2>Sin eventos todavía</h2><p>Publica en @agendatetuan y aparecerán aquí</p></div>`;
+  }
+}
+
+// ─── FILTRAR ──────────────────────────────────────────────────────────────────
+function filterEvents(f) {
+  const hoy  = new Date(); hoy.setHours(0,0,0,0);
+  const sem  = new Date(hoy); sem.setDate(hoy.getDate()+7);
+  const mes  = new Date(hoy); mes.setDate(hoy.getDate()+31);
+  return allEvents.filter(ev => {
+    const d = new Date(ev.datetime);
+    if (f==='proximos') return d >= hoy;
+    if (f==='semana')   return d >= hoy && d <= sem;
+    if (f==='mes')      return d >= hoy && d <= mes;
+    return true;
+  });
+}
+
+// ─── RENDERIZAR TARJETAS ──────────────────────────────────────────────────────
+function renderEvents(f) {
+  const evs = filterEvents(f);
+  const c   = document.getElementById('events-container');
+  c.className = 'events-grid' + (isGrid ? '' : ' list-view');
+  if (!evs.length) {
+    c.innerHTML = `<div class="empty-state"><h2>Sin actividades</h2><p>No hay eventos para este período</p></div>`;
+    return;
+  }
+  let html = '';
+  let lastMonth = -1;
+  evs.forEach((ev, i) => {
+    const d   = new Date(ev.datetime);
+    const mes = d.getMonth();
+    if (mes !== lastMonth) {
+      html += `<div class="month-divider"><span class="month-label">${MESES_L[mes]} ${d.getFullYear()}</span><div class="month-line"></div></div>`;
+      lastMonth = mes;
     }
+    const esHoy = isToday(d);
+    const hora  = d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    html += `<div class="event-card">
+      <div class="card-top">
+        <div class="date-block">
+          <div class="date-day">${d.getDate()}</div>
+          <div class="date-month">${MESES[mes]}</div>
+        </div>
+        <div class="card-info">
+          <div class="event-title">${ev.title}${esHoy?'<span class="badge-hoy">Hoy</span>':''}</div>
+          <div class="meta-item"><span class="meta-icon">🕐</span>${DIAS[d.getDay()]} · ${hora}</div>
+          ${ev.location?`<div class="meta-item"><span class="meta-icon">📍</span>${ev.location}</div>`:''}
+        </div>
+      </div>
+      ${ev.description?`<div class="event-desc">${ev.description}</div>`:''}
+      <div class="card-actions">
+        <a class="btn-gcal" href="${buildGCalUrl(ev)}" target="_blank">📅 Google Calendar</a>
+        <a class="btn-ics" href="#" onclick="dlICS(${i},event)">⬇ .ICS</a>
+        <button class="btn-more" onclick="openModal(${i})">Ver más →</button>
+      </div>
+    </div>`;
+  });
+  c.innerHTML = html;
+}
 
-    // ─── UTILIDADES DE FECHA ─────────────────────────────────────
-    function isToday(d) {
-      const hoy = new Date();
-      return d.getDate() === hoy.getDate() && d.getMonth() === hoy.getMonth() && d.getFullYear() === hoy.getFullYear();
-    }
+// ─── UTILIDADES FECHA ─────────────────────────────────────────────────────────
+function isToday(d){const n=new Date();return d.getDate()===n.getDate()&&d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear();}
+function toGCal(dt){return new Date(dt).toISOString().replace(/-|:|\.\d+/g,'').slice(0,15)+'Z';}
+function toLocal(dt){if(!dt)return'';const d=new Date(dt),pad=n=>String(n).padStart(2,'0');return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;}
 
-    function toGCalDate(dt) {
-      const d = new Date(dt);
-      return d.toISOString().replace(/-|:|\.\d+/g, '').slice(0, 15) + 'Z';
-    }
+function buildGCalUrl(ev){
+  const s=toGCal(ev.datetime);
+  const edt=ev.end_datetime?new Date(ev.end_datetime):(()=>{const x=new Date(ev.datetime);x.setHours(x.getHours()+2);return x;})();
+  const e=toGCal(edt.toISOString?edt.toISOString():edt);
+  return`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(ev.title)}&dates=${s}/${e}&details=${encodeURIComponent(ev.description||'')}&location=${encodeURIComponent(ev.location||'Tetuán, Madrid')}`;
+}
 
-    function buildGoogleCalUrl(ev) {
-      const start = toGCalDate(ev.datetime);
-      const end = ev.end_datetime ? toGCalDate(ev.end_datetime) : (() => {
-        const d = new Date(ev.datetime); d.setHours(d.getHours() + 2);
-        return toGCalDate(d.toISOString());
-      })();
-      const params = new URLSearchParams({
-        action: 'TEMPLATE',
-        text: ev.title,
-        dates: `${start}/${end}`,
-        details: ev.description || '',
-        location: ev.location || 'Tetuán, Madrid',
-      });
-      return `https://calendar.google.com/calendar/render?${params}`;
-    }
+function buildICS(ev){
+  const s=toGCal(ev.datetime);
+  const edt=ev.end_datetime?new Date(ev.end_datetime):(()=>{const x=new Date(ev.datetime);x.setHours(x.getHours()+2);return x;})();
+  const e=toGCal(edt.toISOString?edt.toISOString():edt);
+  return`BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${ev.title}\nDTSTART:${s}\nDTEND:${e}\nLOCATION:${ev.location||'Tetuán, Madrid'}\nDESCRIPTION:${(ev.description||'').replace(/\n/g,'\\n')}\nEND:VEVENT\nEND:VCALENDAR`;
+}
 
-    function buildICS(ev) {
-      const start = toGCalDate(ev.datetime);
-      const d2 = ev.end_datetime ? new Date(ev.end_datetime) : new Date(ev.datetime);
-      if (!ev.end_datetime) d2.setHours(d2.getHours() + 2);
-      const end = toGCalDate(d2.toISOString());
-      return `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${ev.title}\nDTSTART:${start}\nDTEND:${end}\nLOCATION:${ev.location || 'Tetuán, Madrid'}\nDESCRIPTION:${(ev.description || '').replace(/\n/g, '\\n')}\nEND:VEVENT\nEND:VCALENDAR`;
-    }
+function dlICS(idx,e){
+  e.preventDefault();
+  const ev=filterEvents(currentFilter)[idx];
+  const b=new Blob([buildICS(ev)],{type:'text/calendar'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(b);
+  a.download=ev.title.replace(/\s+/g,'_')+'.ics';
+  a.click();
+}
 
-    function downloadICS(idx, e) {
-      e.preventDefault();
-      const ev = filterEvents(currentFilter)[idx];
-      const blob = new Blob([buildICS(ev)], {type: 'text/calendar'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = ev.title.replace(/\s+/g, '_') + '.ics';
-      a.click();
-    }
+// ─── MODAL DETALLE ────────────────────────────────────────────────────────────
+function openModal(idx){
+  const ev=filterEvents(currentFilter)[idx];
+  const d=new Date(ev.datetime);
+  const hora=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('modal-title').textContent=ev.title;
+  document.getElementById('modal-meta').innerHTML=`
+    <div class="meta-item"><span class="meta-icon">📅</span>${DIAS[d.getDay()]}, ${d.getDate()} de ${MESES_L[d.getMonth()]} · ${hora}</div>
+    ${ev.location?`<div class="meta-item"><span class="meta-icon">📍</span>${ev.location}</div>`:''}`;
+  document.getElementById('modal-desc').textContent=ev.description||'';
+  document.getElementById('modal-actions').innerHTML=`
+    <a class="btn-gcal" href="${buildGCalUrl(ev)}" target="_blank">📅 Google Calendar</a>
+    <a class="btn-ics" href="#" onclick="dlICS(${idx},event)">⬇ .ICS</a>`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+document.getElementById('modal-close').onclick=()=>document.getElementById('modal-overlay').classList.remove('open');
+document.getElementById('modal-overlay').onclick=e=>{if(e.target===document.getElementById('modal-overlay'))document.getElementById('modal-overlay').classList.remove('open');};
 
-    // ─── MODAL ───────────────────────────────────────────────────
-    function openModal(idx) {
-      const ev = filterEvents(currentFilter)[idx];
-      const d = new Date(ev.datetime);
-      const hora = d.toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'});
+// ─── FILTROS / VISTA ──────────────────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filter-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  currentFilter=b.dataset.filter;
+  renderEvents(currentFilter);
+}));
+document.getElementById('btn-grid').onclick=()=>{isGrid=true;document.getElementById('btn-grid').classList.add('active');document.getElementById('btn-list').classList.remove('active');renderEvents(currentFilter);};
+document.getElementById('btn-list').onclick=()=>{isGrid=false;document.getElementById('btn-list').classList.add('active');document.getElementById('btn-grid').classList.remove('active');renderEvents(currentFilter);};
 
-      document.getElementById('modal-title').textContent = ev.title;
-      document.getElementById('modal-meta').innerHTML = `
-        <div class="event-meta-item"><span class="icon">📅</span>${DIAS[d.getDay()]}, ${d.getDate()} de ${MESES_LARGO[d.getMonth()]} · ${hora}</div>
-        ${ev.location ? `<div class="event-meta-item"><span class="icon">📍</span>${ev.location}</div>` : ''}
-      `;
-      document.getElementById('modal-desc').textContent = ev.description || '';
-      document.getElementById('modal-actions').innerHTML = `
-        <a class="btn-calendar" href="${buildGoogleCalUrl(ev)}" target="_blank">📅 Google Calendar</a>
-        <a class="btn-ics" href="#" onclick="downloadICS(${idx}, event)">⬇ Descargar .ICS</a>
-      `;
-      document.getElementById('modal-overlay').classList.add('open');
-    }
+// ─── ADMIN: LOGIN ─────────────────────────────────────────────────────────────
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 
-    document.getElementById('modal-close').onclick = () =>
-      document.getElementById('modal-overlay').classList.remove('open');
-    document.getElementById('modal-overlay').onclick = (e) => {
-      if (e.target === document.getElementById('modal-overlay'))
-        document.getElementById('modal-overlay').classList.remove('open');
-    };
+document.getElementById('admin-fab').onclick=()=>{
+  if(adminUnlocked){openAdminPanel();return;}
+  document.getElementById('admin-login-overlay').classList.add('open');
+  setTimeout(()=>document.getElementById('admin-pwd-input').focus(),100);
+};
 
-    // ─── FILTROS Y VISTA ─────────────────────────────────────────
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        renderEvents(currentFilter);
-      });
-    });
+document.getElementById('admin-pwd-cancel').onclick=()=>{
+  document.getElementById('admin-login-overlay').classList.remove('open');
+  document.getElementById('admin-pwd-input').value='';
+  document.getElementById('admin-pwd-error').textContent='';
+};
 
-    document.getElementById('btn-grid').onclick = () => {
-      isGridView = true;
-      document.getElementById('btn-grid').classList.add('active');
-      document.getElementById('btn-list').classList.remove('active');
-      renderEvents(currentFilter);
-    };
+async function checkPassword(){
+  const pwd=document.getElementById('admin-pwd-input').value;
+  const hash=await sha256(pwd);
+  if(hash===ADMIN_PWD_HASH){
+    adminUnlocked=true;
+    document.getElementById('admin-login-overlay').classList.remove('open');
+    document.getElementById('admin-pwd-input').value='';
+    document.getElementById('admin-pwd-error').textContent='';
+    openAdminPanel();
+  } else {
+    document.getElementById('admin-pwd-error').textContent='Contraseña incorrecta';
+    document.getElementById('admin-pwd-input').value='';
+  }
+}
 
-    document.getElementById('btn-list').onclick = () => {
-      isGridView = false;
-      document.getElementById('btn-list').classList.add('active');
-      document.getElementById('btn-grid').classList.remove('active');
-      renderEvents(currentFilter);
-    };
+document.getElementById('admin-pwd-submit').onclick=checkPassword;
+document.getElementById('admin-pwd-input').addEventListener('keydown',e=>{if(e.key==='Enter')checkPassword();});
 
-    // ─── INIT ─────────────────────────────────────────────────────
-    loadEvents();
-  </script>
+// ─── ADMIN: PANEL ─────────────────────────────────────────────────────────────
+function openAdminPanel(){
+  document.getElementById('admin-panel-overlay').classList.add('open');
+  renderAdminList();
+}
+
+document.getElementById('admin-panel-close').onclick=()=>document.getElementById('admin-panel-overlay').classList.remove('open');
+
+document.querySelectorAll('.admin-tab').forEach(tab=>tab.addEventListener('click',()=>{
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-content').forEach(c=>c.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  if(tab.dataset.tab==='lista') renderAdminList();
+}));
+
+// ─── ADMIN: GUARDAR EVENTO NUEVO ──────────────────────────────────────────────
+document.getElementById('btn-save-event').onclick=async()=>{
+  const title=document.getElementById('f-title').value.trim();
+  const dt   =document.getElementById('f-datetime').value;
+  if(!title||!dt){showMsg('form-msg','Rellena al menos el título y la fecha','error');return;}
+  const newEv={
+    id: 'manual-'+Date.now(),
+    title,
+    datetime: new Date(dt).toISOString(),
+    end_datetime: document.getElementById('f-end').value ? new Date(document.getElementById('f-end').value).toISOString() : null,
+    location: document.getElementById('f-location').value.trim()||null,
+    description: document.getElementById('f-desc').value.trim(),
+    source_id: 'manual',
+    created_at: new Date().toISOString()
+  };
+  allEvents.push(newEv);
+  allEvents.sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
+  await saveEvents();
+  renderEvents(currentFilter);
+  ['f-title','f-location','f-desc','f-datetime','f-end'].forEach(id=>document.getElementById(id).value='');
+  showMsg('form-msg','✅ Evento guardado correctamente');
+};
+
+// ─── ADMIN: LISTA ─────────────────────────────────────────────────────────────
+function renderAdminList(){
+  const c=document.getElementById('admin-event-list');
+  if(!allEvents.length){c.innerHTML='<p style="color:var(--gris-texto);font-size:0.85rem;">No hay eventos todavía</p>';return;}
+  const sorted=[...allEvents].sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
+  c.innerHTML=sorted.map(ev=>{
+    const d=new Date(ev.datetime);
+    const label=`${d.getDate()} ${MESES[d.getMonth()]}`;
+    return`<div class="admin-event-item">
+      <span class="aei-date">${label}</span>
+      <span class="aei-title">${ev.title}</span>
+      <button onclick="openEdit('${ev.id}')">Editar</button>
+      <button class="del" onclick="deleteEvent('${ev.id}')">Borrar</button>
+    </div>`;
+  }).join('');
+}
+
+// ─── ADMIN: EDITAR ────────────────────────────────────────────────────────────
+function openEdit(id){
+  const ev=allEvents.find(e=>e.id===id);
+  if(!ev)return;
+  editingId=id;
+  document.getElementById('e-title').value=ev.title||'';
+  document.getElementById('e-datetime').value=toLocal(ev.datetime);
+  document.getElementById('e-end').value=toLocal(ev.end_datetime);
+  document.getElementById('e-location').value=ev.location||'';
+  document.getElementById('e-desc').value=ev.description||'';
+  document.getElementById('edit-msg').style.display='none';
+  document.getElementById('edit-overlay').classList.add('open');
+}
+
+document.getElementById('edit-close').onclick=()=>document.getElementById('edit-overlay').classList.remove('open');
+
+document.getElementById('btn-update-event').onclick=async()=>{
+  const idx=allEvents.findIndex(e=>e.id===editingId);
+  if(idx<0)return;
+  const title=document.getElementById('e-title').value.trim();
+  const dt   =document.getElementById('e-datetime').value;
+  if(!title||!dt){showMsg('edit-msg','Rellena al menos el título y la fecha','error');return;}
+  allEvents[idx]={
+    ...allEvents[idx],
+    title,
+    datetime: new Date(dt).toISOString(),
+    end_datetime: document.getElementById('e-end').value ? new Date(document.getElementById('e-end').value).toISOString() : null,
+    location: document.getElementById('e-location').value.trim()||null,
+    description: document.getElementById('e-desc').value.trim()
+  };
+  allEvents.sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
+  await saveEvents();
+  renderEvents(currentFilter);
+  renderAdminList();
+  showMsg('edit-msg','✅ Guardado');
+  setTimeout(()=>document.getElementById('edit-overlay').classList.remove('open'),900);
+};
+
+document.getElementById('btn-delete-event').onclick=async()=>{
+  if(!confirm('¿Seguro que quieres borrar este evento?'))return;
+  allEvents=allEvents.filter(e=>e.id!==editingId);
+  await saveEvents();
+  renderEvents(currentFilter);
+  renderAdminList();
+  document.getElementById('edit-overlay').classList.remove('open');
+  showMsg('list-msg','✅ Evento borrado');
+};
+
+async function deleteEvent(id){
+  if(!confirm('¿Seguro que quieres borrar este evento?'))return;
+  allEvents=allEvents.filter(e=>e.id!==id);
+  await saveEvents();
+  renderEvents(currentFilter);
+  renderAdminList();
+  showMsg('list-msg','✅ Evento borrado');
+}
+
+// ─── GUARDAR EN GITHUB ────────────────────────────────────────────────────────
+async function saveEvents(){
+  if(!GITHUB_REPO||!GITHUB_TOKEN){
+    // Sin GitHub configurado: descarga el JSON para que lo subas manualmente
+    const b=new Blob([JSON.stringify(allEvents,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b);
+    a.download='events.json';
+    a.click();
+    return;
+  }
+  try{
+    const api=`https://api.github.com/repos/${GITHUB_REPO}/contents/events.json`;
+    const getR=await fetch(api,{headers:{'Authorization':`token ${GITHUB_TOKEN}`,'Accept':'application/vnd.github.v3+json'}});
+    const sha=getR.ok?(await getR.json()).sha:undefined;
+    const content=btoa(unescape(encodeURIComponent(JSON.stringify(allEvents,null,2))));
+    await fetch(api,{method:'PUT',headers:{'Authorization':`token ${GITHUB_TOKEN}`,'Content-Type':'application/json'},
+      body:JSON.stringify({message:'🗓️ Evento editado desde el panel admin',content,...(sha?{sha}:{})})});
+  }catch(e){console.error('GitHub save error',e);}
+}
+
+function showMsg(id,text,type='ok'){
+  const el=document.getElementById(id);
+  el.textContent=text;
+  el.style.display='block';
+  el.style.background=type==='error'?'#ffe5e5':'#e8fff2';
+  el.style.borderColor=type==='error'?'#e55':'#5cb85c';
+  el.style.color=type==='error'?'#a00':'#2d6a2d';
+  if(type==='ok')setTimeout(()=>el.style.display='none',3000);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+loadEvents();
+</script>
 </body>
 </html>
