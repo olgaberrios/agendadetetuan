@@ -29,26 +29,49 @@ import anthropic
 from github import Github, GithubException
 
 load_dotenv()
+load_dotenv()
 logging.basicConfig(
     format='%(asctime)s [%(levelname)s] %(message)s',
     level=logging.INFO
 )
 log = logging.getLogger(__name__)
 
-# ─── CONFIG ──────────────────────────────────────────────────────────────────
-TELEGRAM_TOKEN   = os.environ["TELEGRAM_TOKEN"]
-ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
-GITHUB_TOKEN     = os.environ["GITHUB_TOKEN"]
-GITHUB_REPO      = os.environ["GITHUB_REPO"]       # usuario/nombre-repo
-CHANNEL_USERNAME = os.environ.get("CHANNEL_USERNAME", "@agendatetuan")
+# --- CONFIG ---
+log.info("Cargando configuracion...")
 
-EVENTS_JSON_PATH = "events.json"   # ruta dentro del repo de GitHub
-REVIEW_CHAT_ID   = os.environ.get("REVIEW_CHAT_ID")  # tu chat id personal (opcional)
+TELEGRAM_TOKEN    = os.environ.get("TELEGRAM_TOKEN", "")
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
+GITHUB_TOKEN      = os.environ.get("GITHUB_TOKEN", "")
+GITHUB_REPO       = os.environ.get("GITHUB_REPO", "")
+CHANNEL_USERNAME  = os.environ.get("CHANNEL_USERNAME", "@agendatetuan")
+EVENTS_JSON_PATH  = "events.json"
+REVIEW_CHAT_ID    = os.environ.get("REVIEW_CHAT_ID")
 
-# ─── CLIENTES ─────────────────────────────────────────────────────────────────
-claude = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-gh     = Github(GITHUB_TOKEN)
-repo   = gh.get_repo(GITHUB_REPO)
+log.info(f"  TELEGRAM_TOKEN:    {'OK' if TELEGRAM_TOKEN else 'FALTA'}")
+log.info(f"  ANTHROPIC_API_KEY: {'OK' if ANTHROPIC_API_KEY else 'FALTA'}")
+log.info(f"  GITHUB_TOKEN:      {'OK' if GITHUB_TOKEN else 'FALTA'}")
+log.info(f"  GITHUB_REPO:       {GITHUB_REPO if GITHUB_REPO else 'FALTA'}")
+
+if not TELEGRAM_TOKEN:
+    log.error("TELEGRAM_TOKEN no encontrado.")
+    import sys; sys.exit(1)
+
+# --- CLIENTES ---
+log.info("Conectando con Anthropic y GitHub...")
+try:
+    claude = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    log.info("  Anthropic: OK")
+except Exception as e:
+    log.error(f"  Anthropic error: {e}")
+    import sys; sys.exit(1)
+
+try:
+    gh   = Github(GITHUB_TOKEN)
+    repo = gh.get_repo(GITHUB_REPO)
+    log.info(f"  GitHub repo OK: {GITHUB_REPO}")
+except Exception as e:
+    log.error(f"  GitHub error: {e}")
+    import sys; sys.exit(1)
 
 # ─── PROMPT PARA CLAUDE ───────────────────────────────────────────────────────
 SYSTEM_PROMPT = """
