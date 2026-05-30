@@ -319,15 +319,26 @@ async def daily_cleanup(context):
     cleanup_past_images()
 
 def main():
-    threading.Thread(target=start_web_server, daemon=True).start()
-    log.info("🚇 Bot Agenda Tetuán arrancando...")
+    import time as time_module
+    from datetime import time as dtime
+
+    # Arrancar servidor web primero y esperar a que el puerto esté listo
+    t = threading.Thread(target=start_web_server, daemon=True)
+    t.start()
+    time_module.sleep(2)
+
+    log.info("Bot Agenda Tetuan arrancando...")
     app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
-    # Limpieza diaria a las 3:00 AM
-    from datetime import time as dtime
-    app.job_queue.run_daily(daily_cleanup, time=dtime(3, 0))
-    log.info(f"✅ Escuchando mensajes de {CHANNEL_USERNAME}")
+
+    if app.job_queue:
+        app.job_queue.run_daily(daily_cleanup, time=dtime(3, 0))
+        log.info("Limpieza diaria programada a las 3:00 AM")
+    else:
+        log.warning("JobQueue no disponible")
+
+    log.info(f"Escuchando mensajes de {CHANNEL_USERNAME}")
     app.run_polling(allowed_updates=["channel_post", "message"])
 
 if __name__ == "__main__":
