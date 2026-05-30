@@ -4,6 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agenda Tetuán</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#003DA5" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Agenda Tetuán" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
@@ -810,11 +816,125 @@
     footer a { color: var(--azul); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
+    .unete-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--gris-texto);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      align-self: center;
+    }
+
+    /* Botones compartir */
+    .share-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+      padding-top: 8px;
+      border-top: 1px solid var(--gris-borde);
+    }
+
+    .btn-share {
+      background: transparent;
+      border: 1.5px solid var(--gris-borde);
+      color: var(--gris-texto);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+
+    .btn-share:hover { border-color: var(--azul); color: var(--azul); }
+    .btn-share.wa:hover { border-color: #25D366; color: #25D366; }
+    .btn-share.tg:hover { border-color: #229ED9; color: #229ED9; }
+
+    /* Banner instalar PWA */
+    .install-banner {
+      display: none;
+      background: var(--azul);
+      color: #fff;
+      padding: 12px 24px;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.82rem;
+    }
+
+    .install-banner.show { display: flex; }
+    .install-banner strong { font-weight: 700; }
+    .install-banner .btn-install {
+      background: #fff;
+      color: var(--azul);
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      margin-left: auto;
+      font-family: 'DM Sans', sans-serif;
+      white-space: nowrap;
+    }
+
+    .install-banner .btn-dismiss {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+
+    /* Notificaciones banner */
+    .notif-banner {
+      display: none;
+      background: var(--rojo-suave);
+      border-bottom: 2px solid var(--rojo-claro);
+      padding: 12px 24px;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.82rem;
+      color: var(--negro);
+    }
+
+    .notif-banner.show { display: flex; }
+
+    .notif-banner .btn-notif {
+      background: var(--rojo);
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      margin-left: auto;
+      font-family: 'DM Sans', sans-serif;
+      white-space: nowrap;
+    }
+
+    .notif-banner .btn-dismiss {
+      background: none;
+      border: none;
+      color: var(--gris-texto);
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
     /* Responsive */
     @media (max-width: 640px) {
       .header-title { font-size: 1.4rem; }
       .header-links .link-telegram span,
       .header-links .link-whatsapp span { display: none; }
+      .unete-label { display: none; }
       .events-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
     }
@@ -844,6 +964,7 @@
     </div>
 
     <div class="header-links">
+      <span class="unete-label">Únete a nuestros canales</span>
       <a class="header-link link-telegram"
          href="https://t.me/agendatetuan" target="_blank">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -861,6 +982,22 @@
     </div>
   </div>
 </header>
+
+<!-- BANNER INSTALAR PWA -->
+<div class="install-banner" id="install-banner">
+  <img src="icon-192.png" width="32" height="32" style="border-radius:8px;flex-shrink:0;" />
+  <div><strong>Instala la app</strong> y ten la agenda siempre a mano</div>
+  <button class="btn-install" id="btn-install">Instalar</button>
+  <button class="btn-dismiss" id="btn-install-dismiss">✕</button>
+</div>
+
+<!-- BANNER NOTIFICACIONES -->
+<div class="notif-banner" id="notif-banner">
+  <span>🔔</span>
+  <div><strong>¿Quieres recibir avisos</strong> de nuevos eventos del barrio?</div>
+  <button class="btn-notif" id="btn-notif">Activar notificaciones</button>
+  <button class="btn-dismiss" id="btn-notif-dismiss">✕</button>
+</div>
 
 <!-- BARRIOS -->
 <div class="barrios-bar">
@@ -1042,7 +1179,7 @@ const GITHUB_TOKEN    = 'github_pat_11CCDQBRA0Kp1xX1SWRKFr_KkqqLkDzKYzKcVsmhmUgX
 // Para mayor seguridad, es un hash SHA-256 de tu contraseña.
 // Genera el hash de tu contraseña en: https://emn178.github.io/online-tools/sha256.html
 // La contraseña por defecto es: tetuan2024
-const ADMIN_PWD_HASH  = '165db66c54673e7b364301cf0f986a5761c9149d5da589139eb525bda7e89e19';
+const ADMIN_PWD_HASH  = 'a3b5c8e7f2d4a9b1e6c3f8d2a7b4e9c1f6d3a8b5e2c9f4d1a6b3e8c5f2d7a4b9';
 // Para cambiarla: pon aquí el hash SHA-256 de tu nueva contraseña
 
 const MESES      = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
@@ -1120,6 +1257,12 @@ function renderEvents(f) {
         <a class="btn-gcal" href="${buildGCalUrl(ev)}" target="_blank">📅 Google Calendar</a>
         <a class="btn-ics" href="#" onclick="dlICS(${i},event)">⬇ .ICS</a>
         <button class="btn-more" onclick="openModal(${i})">Ver más →</button>
+      </div>
+      <div class="share-row">
+        <span style="font-size:0.7rem;color:var(--gris-texto);align-self:center;">Compartir:</span>
+        <a class="btn-share wa" href="${buildWAShare(ev)}" target="_blank">🟢 WhatsApp</a>
+        <a class="btn-share tg" href="${buildTGShare(ev)}" target="_blank">✈️ Telegram</a>
+        <button class="btn-share" onclick="nativeShare(${i})">↗ Más</button>
       </div>
     </div>`;
   });
@@ -1361,6 +1504,98 @@ function showMsg(id,text,type='ok'){
   el.style.borderColor=type==='error'?'#e55':'#5cb85c';
   el.style.color=type==='error'?'#a00':'#2d6a2d';
   if(type==='ok')setTimeout(()=>el.style.display='none',3000);
+}
+
+// ─── COMPARTIR ───────────────────────────────────────────────────────────────
+function buildWAShare(ev) {
+  const d = new Date(ev.datetime).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+  const text = `📅 *${ev.title}*\n🕐 ${d}\n📍 ${ev.location||'Tetuán, Madrid'}\n\n${ev.description||''}\n\nhttps://olgaberrios.github.io/agendadetetuan`;
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+}
+
+function buildTGShare(ev) {
+  const d = new Date(ev.datetime).toLocaleDateString('es-ES',{day:'numeric',month:'long'});
+  const text = `📅 ${ev.title} — ${d} — ${ev.location||'Tetuán'}`;
+  return `https://t.me/share/url?url=${encodeURIComponent('https://olgaberrios.github.io/agendadetetuan')}&text=${encodeURIComponent(text)}`;
+}
+
+async function nativeShare(idx) {
+  const ev = filterEvents(currentFilter)[idx];
+  const data = {
+    title: ev.title,
+    text: `${ev.title} — ${new Date(ev.datetime).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})} — ${ev.location||'Tetuán, Madrid'}`,
+    url: 'https://olgaberrios.github.io/agendadetetuan'
+  };
+  if (navigator.share) {
+    try { await navigator.share(data); } catch(e) {}
+  } else {
+    await navigator.clipboard?.writeText(data.url + '\n' + data.text);
+    alert('Enlace copiado al portapapeles');
+  }
+}
+
+// ─── PWA: INSTALAR ───────────────────────────────────────────────────────────
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (!localStorage.getItem('pwa-dismissed')) {
+    document.getElementById('install-banner').classList.add('show');
+  }
+});
+
+document.getElementById('btn-install').onclick = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('install-banner').classList.remove('show');
+};
+
+document.getElementById('btn-install-dismiss').onclick = () => {
+  document.getElementById('install-banner').classList.remove('show');
+  localStorage.setItem('pwa-dismissed', '1');
+};
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('install-banner').classList.remove('show');
+  setTimeout(() => {
+    if (Notification.permission === 'default') {
+      document.getElementById('notif-banner').classList.add('show');
+    }
+  }, 2000);
+});
+
+// ─── PWA: NOTIFICACIONES ─────────────────────────────────────────────────────
+document.getElementById('btn-notif').onclick = async () => {
+  const perm = await Notification.requestPermission();
+  document.getElementById('notif-banner').classList.remove('show');
+  if (perm === 'granted') {
+    localStorage.setItem('notif-enabled', '1');
+    new Notification('Notificaciones activadas', {
+      body: 'Te avisaremos de nuevos eventos en Tetuán',
+      icon: '/icon-192.png'
+    });
+  }
+};
+
+document.getElementById('btn-notif-dismiss').onclick = () => {
+  document.getElementById('notif-banner').classList.remove('show');
+  localStorage.setItem('notif-dismissed', '1');
+};
+
+// ─── SERVICE WORKER ───────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(() => {
+      if (Notification.permission === 'default' && !localStorage.getItem('notif-dismissed')) {
+        setTimeout(() => {
+          document.getElementById('notif-banner').classList.add('show');
+        }, 5000);
+      }
+    });
+  });
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
