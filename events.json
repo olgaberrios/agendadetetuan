@@ -55,18 +55,6 @@
     "created_at": "2026-05-31T08:01:33.068888+00:00"
   },
   {
-    "id": "b31dcc1702",
-    "title": "Taller de magdalenas",
-    "datetime": "2026-06-03T11:00:00",
-    "end_datetime": null,
-    "location": "Centro Gastronómico de Tetuán",
-    "description": "Taller de magdalenas que se impartirá el miércoles 3 de junio a las 11h en el Centro Gastronómico de Tetuán.",
-    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/b31dcc1702.jpg",
-    "image_hash": "72e5a1a397a4c657103c3d72ad88ae49",
-    "source_id": "img_65",
-    "created_at": "2026-05-31T08:33:55.772901+00:00"
-  },
-  {
     "id": "9af262b484",
     "title": "Asamblea abierta para la preparación de las fiestas del barrio",
     "datetime": "2026-06-03T19:30:00",
