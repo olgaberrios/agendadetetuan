@@ -1,5 +1,16 @@
 [
   {
+    "id": "c6efdbfac9",
+    "title": "La Dehesa de Cine",
+    "datetime": "2026-05-31T11:00:00",
+    "end_datetime": null,
+    "location": "CIEA Dehesa de la Villa",
+    "description": "Proyección de 6 cortometrajes de ficción, animación y documentales con una temática común: concienciar sobre el respeto y el cuidado de nuestro entorno y nuestro planeta. Evento para mayores de 12 años. Inscripciones por teléfono al 914 80 21 41 o correo infodehesa@madrid.es.",
+    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/c6efdbfac9.jpg",
+    "source_id": "img_42",
+    "created_at": "2026-05-31T07:54:29.492215+00:00"
+  },
+  {
     "id": "56b8c9f458",
     "title": "Club de lectura: Las mejores historias jamás contadas",
     "datetime": "2026-06-01T12:00:00",
