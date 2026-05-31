@@ -1265,8 +1265,10 @@
 <script>
 // ─── CONFIG ───────────────────────────────────────────────────────────────────
 const EVENTS_JSON_URL = './events.json';
-const GITHUB_REPO     = 'olgaberrios/agendadetetuan';
-const GITHUB_TOKEN    = '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';
+const GITHUB_REPO     = '';  // ya no se usa directamente
+const GITHUB_TOKEN    = '';  // ya no se usa directamente
+const BOT_API_URL     = 'https://agendadetetuan.onrender.com';
+const ADMIN_API_KEY   = '165db66c54673e7b364301cf0f986a5761c9149d5da589139eb525bda7e89e19';
 
 // CONTRASEÑA ADMIN — cámbiala por la que quieras
 // Para mayor seguridad, es un hash SHA-256 de tu contraseña.
@@ -1560,11 +1562,12 @@ document.getElementById('btn-update-event').onclick=async()=>{
 
 document.getElementById('btn-delete-event').onclick=async()=>{
   if(!confirm('¿Seguro que quieres borrar este evento?'))return;
-  allEvents=allEvents.filter(e=>e.id!==editingId);
+  const idToDel=editingId;
+  allEvents=allEvents.filter(e=>e.id!==idToDel);
   renderEvents(currentFilter);
   document.getElementById('edit-overlay').classList.remove('open');
   showMsg('list-msg','✅ Evento borrado');
-  await saveEvents();
+  await deleteEventFromBot(idToDel);
   renderAdminList();
 };
 
@@ -1573,39 +1576,41 @@ async function deleteEvent(id){
   allEvents=allEvents.filter(e=>e.id!==id);
   renderEvents(currentFilter);
   showMsg('list-msg','✅ Evento borrado');
-  await saveEvents();
+  await deleteEventFromBot(id);
   renderAdminList();
 }
 
 // ─── GUARDAR EN GITHUB ────────────────────────────────────────────────────────
 async function saveEvents(){
-  if(!GITHUB_REPO||!GITHUB_TOKEN){
-    const b=new Blob([JSON.stringify(allEvents,null,2)],{type:'application/json'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(b);
-    a.download='events.json';
-    a.click();
-    return;
-  }
   try{
-    const api=`https://api.github.com/repos/${GITHUB_REPO}/contents/events.json`;
-    const getR=await fetch(api,{headers:{'Authorization':`token ${GITHUB_TOKEN}`,'Accept':'application/vnd.github.v3+json'}});
-    if(!getR.ok) throw new Error('No se pudo leer events.json: '+getR.status);
-    const fileData=await getR.json();
-    const sha=fileData.sha;
-    const jsonStr=JSON.stringify(allEvents,null,2);
-    // Encode to base64 properly handling UTF-8
-    const b64=btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g,(_,p1)=>String.fromCharCode('0x'+p1)));
-    const putR=await fetch(api,{method:'PUT',headers:{'Authorization':`token ${GITHUB_TOKEN}`,'Content-Type':'application/json'},
-      body:JSON.stringify({message:'Evento editado desde el panel admin',content:b64,sha})});
-    if(!putR.ok){
-      const err=await putR.json();
-      throw new Error('GitHub error: '+JSON.stringify(err));
-    }
-    console.log('✅ Guardado en GitHub');
+    const r=await fetch(BOT_API_URL+'/save',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_API_KEY},
+      body:JSON.stringify({events:allEvents})
+    });
+    const data=await r.json();
+    if(!data.ok) throw new Error(data.error||'Error desconocido');
+    console.log('Guardado OK');
   }catch(e){
-    console.error('GitHub save error',e);
+    console.error('Save error',e);
     alert('Error al guardar: '+e.message);
+  }
+}
+
+async function deleteEventFromBot(id){
+  try{
+    const r=await fetch(BOT_API_URL+'/delete',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_API_KEY},
+      body:JSON.stringify({id})
+    });
+    const data=await r.json();
+    if(!data.ok) throw new Error(data.error||'Error desconocido');
+    return true;
+  }catch(e){
+    console.error('Delete error',e);
+    alert('Error al borrar: '+e.message);
+    return false;
   }
 }
 

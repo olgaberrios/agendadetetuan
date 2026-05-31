@@ -322,20 +322,80 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ok = add_event(event_data, source_id=f"img_{msg.message_id}", image_bytes=image_bytes)
     await notify_admin(context, event_data, ok)
 
-# ─── SERVIDOR WEB (para que Render no duerma el servicio) ─────────────────────
-class HealthHandler(BaseHTTPRequestHandler):
+# ─── API KEY PARA EL PANEL ADMIN ─────────────────────────────────────────────
+ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "165db66c54673e7b364301cf0f986a5761c9149d5da589139eb525bda7e89e19")
+
+# ─── SERVIDOR WEB CON API ─────────────────────────────────────────────────────
+class APIHandler(BaseHTTPRequestHandler):
+
+    def _cors(self):
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Admin-Key")
+
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self._cors()
+        self.end_headers()
+
     def do_GET(self):
         self.send_response(200)
+        self._cors()
         self.end_headers()
         self.wfile.write(b"Bot Agenda Tetuan OK")
+
+    def do_POST(self):
+        key = self.headers.get("X-Admin-Key", "")
+        if key != ADMIN_API_KEY:
+            self.send_response(401)
+            self._cors()
+            self.end_headers()
+            self.wfile.write(b'{"error":"Unauthorized"}')
+            return
+
+        length = int(self.headers.get("Content-Length", 0))
+        body   = json.loads(self.rfile.read(length)) if length else {}
+        action = self.path.strip("/")
+
+        try:
+            if action == "delete":
+                event_id = body.get("id", "")
+                events, sha = load_events()
+                events = [e for e in events if e.get("id") != event_id]
+                ok = save_events(events, sha)
+                log.info(f"Admin borró evento {event_id}: {ok}")
+                resp = json.dumps({"ok": ok}).encode()
+            elif action == "save":
+                events = body.get("events", [])
+                _, sha = load_events()
+                ok = save_events(events, sha)
+                log.info(f"Admin guardó {len(events)} eventos: {ok}")
+                resp = json.dumps({"ok": ok}).encode()
+            else:
+                resp = json.dumps({"error": "unknown action"}).encode()
+
+            self.send_response(200)
+            self._cors()
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(resp)
+
+        except Exception as e:
+            log.error(f"API error: {e}")
+            self.send_response(500)
+            self._cors()
+            self.end_headers()
+            self.wfile.write(json.dumps({"error": str(e)}).encode())
+
     def log_message(self, format, *args):
         pass
 
 def start_web_server():
     port = int(os.environ.get("PORT", 8080))
-    server = HTTPServer(("0.0.0.0", port), HealthHandler)
-    log.info(f"🌐 Servidor web en puerto {port}")
+    server = HTTPServer(("0.0.0.0", port), APIHandler)
+    log.info(f"Servidor web + API en puerto {port}")
     server.serve_forever()
+
 
 # ─── ARRANQUE ─────────────────────────────────────────────────────────────────
 async def daily_cleanup(context):
