@@ -97,12 +97,13 @@ Responde UNICAMENTE con el array JSON."""
 # ─── LLAMADA A OPENROUTER ─────────────────────────────────────────────────────
 import time as _time
 
-# Modelos gratuitos actualizados
+# Modelos gratuitos — openrouter/free y owl-alpha son los más estables
 FREE_MODELS = [
-    "google/gemma-3-27b-it:free",
-    "mistralai/mistral-7b-instruct:free",
-    "qwen/qwen2.5-vl-72b-instruct:free",
+    "openrouter/owl-alpha",
     "openrouter/free",
+    "qwen/qwen3-235b-a22b:free",
+    "deepseek/deepseek-v3-0324:free",
+    "meta-llama/llama-4-maverick:free",
 ]
 
 def call_openrouter(messages: list, vision: bool = False) -> str | None:
