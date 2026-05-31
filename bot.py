@@ -54,26 +54,26 @@ except Exception as e:
     import sys; sys.exit(1)
 
 # ─── PROMPT ───────────────────────────────────────────────────────────────────
-PROMPT = f"""Eres un asistente que extrae informacion de eventos culturales y vecinales del
+PROMPT = """Eres un asistente que extrae informacion de eventos culturales y vecinales del
 barrio de Tetuan (Madrid) a partir de mensajes de Telegram (texto o carteles).
 
 Devuelve SOLO un array JSON (sin texto adicional ni bloques de codigo).
 Normalmente tendra un elemento, pero puede tener varios (ver reglas).
 
 Cada elemento:
-{{
+{
   "es_evento": true o false,
   "title": "Titulo del evento",
   "datetime": "YYYY-MM-DDTHH:MM:SS",
   "end_datetime": "YYYY-MM-DDTHH:MM:SS o null",
   "location": "Lugar o null",
   "description": "Descripcion completa"
-}}
+}
 
 Reglas generales:
 - Si NO hay ningun evento concreto, devuelve [{"es_evento": false}].
 - datetime obligatorio si es_evento es true. Sin hora usa 00:00:00.
-- El anno actual es {datetime.now().year}. Hoy es {datetime.now().strftime("%Y-%m-%d")}.
+- El anno actual es 2026. Hoy es 2026-05-31.
 - Calcula fechas relativas como "este viernes" o "manana" respecto a hoy.
 - NO inventes informacion. Usa solo lo que aparece en el texto o imagen.
 - Copia titulos y descripciones tal como aparecen, sin reescribirlos.
@@ -81,15 +81,17 @@ Reglas generales:
 Horarios recurrentes (sin fecha concreta):
 - Si el cartel muestra un horario semanal (ej: "Miercoles 18-19h, Sabado 12-14h"),
   crea UN evento por cada ocurrencia, con las 2 proximas fechas de cada dia de la semana.
-  Ejemplo: "Miercoles y Sabado" = 4 eventos (2 miercoles + 2 sabados proximos).
+  Ejemplo: hoy es Sunday 31 de May. Si pone "Miercoles y Sabado", calcula las 2 proximas
+  fechas de cada dia y crea 4 eventos en total.
 - El titulo de cada evento debe incluir el nombre de la actividad.
 
 Ubicaciones especiales:
-- Si es una emisora de radio, pon el nombre en location y la frecuencia/web en description.
+- Si es una emisora de radio, pon el nombre en location y frecuencia/web en description.
 - Si es una URL, ponla en location tal cual.
 - Si no hay direccion fisica, pon el nombre del espacio o medio, no null.
 
 Responde UNICAMENTE con el array JSON."""
+
 
 
 # ─── LLAMADA A OPENROUTER ─────────────────────────────────────────────────────
@@ -220,37 +222,45 @@ def upload_image_to_github(image_bytes: bytes, filename: str) -> str | None:
         log.error(f"  Error subiendo imagen: {e}")
         return None
 
-def cleanup_past_images():
-    """Borra de GitHub las imágenes de eventos ya pasados."""
+def cleanup_past_events():
+    """Borra eventos pasados y sus imágenes de GitHub."""
     try:
         events, sha = load_events()
         now = datetime.now(timezone.utc)
+        to_keep = []
         changed = False
+
         for ev in events:
-            if not ev.get("image_url"):
-                continue
             dt_str = ev.get("end_datetime") or ev.get("datetime", "")
-            if not dt_str:
-                continue
-            try:
-                dt = datetime.fromisoformat(dt_str)
-                if dt.tzinfo is None:
-                    dt = dt.replace(tzinfo=timezone.utc)
-                if dt < now:
-                    filename = ev["image_url"].split("/images/")[-1]
+            is_past = False
+            if dt_str:
+                try:
+                    dt = datetime.fromisoformat(dt_str)
+                    if dt.tzinfo is None:
+                        dt = dt.replace(tzinfo=timezone.utc)
+                    if dt < now:
+                        is_past = True
+                except Exception:
+                    pass
+
+            if is_past:
+                changed = True
+                log.info(f"  Borrando evento pasado: {ev.get('title')}")
+                # Borrar imagen si existe
+                if ev.get("image_url"):
                     try:
+                        filename = ev["image_url"].split("/images/")[-1]
                         f = repo.get_contents(f"images/{filename}")
                         repo.delete_file(f"images/{filename}", "Borrar imagen de evento pasado", f.sha)
                         log.info(f"  Imagen borrada: {filename}")
                     except GithubException:
                         pass
-                    ev["image_url"] = None
-                    changed = True
-            except Exception:
-                continue
+            else:
+                to_keep.append(ev)
+
         if changed:
-            save_events(events, sha)
-            log.info("Limpieza de imagenes completada")
+            save_events(to_keep, sha)
+            log.info(f"Limpieza completada: {len(events)-len(to_keep)} eventos borrados, {len(to_keep)} conservados")
     except Exception as e:
         log.error(f"Error en limpieza: {e}")
 
@@ -427,7 +437,7 @@ def start_web_server():
 # ─── ARRANQUE ─────────────────────────────────────────────────────────────────
 async def daily_cleanup(context):
     log.info("⏰ Limpieza diaria de imágenes...")
-    cleanup_past_images()
+    cleanup_past_events()
 
 def main():
     import time as time_module
