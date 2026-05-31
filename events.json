@@ -124,6 +124,18 @@
     "created_at": "2026-05-31T07:50:07.995504+00:00"
   },
   {
+    "id": "ea5bacac2b",
+    "title": "Teletetuán 13: desalojo de Ecosol",
+    "datetime": "2026-06-07T00:00:00",
+    "end_datetime": null,
+    "location": null,
+    "description": "Teletetuán 13: desalojo de Ecosol. Nuevo capítulo del noticiario que se emitirá el domingo 7 de junio. Puedes ver el episodio aquí: https://youtube.com/shorts/-X8z9NMGDgg?si=BzjqqGXBxDR26Cgo",
+    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/ea5bacac2b.jpg",
+    "image_hash": "f725b93a1e878c8b1fc1dde58ce00457",
+    "source_id": "img_81",
+    "created_at": "2026-05-31T11:43:30.401736+00:00"
+  },
+  {
     "id": "f0ccdd1b01",
     "title": "EL MARAVILLOSO MUNDO DEL LAS ABEJAS",
     "datetime": "2026-06-13T11:00:00",
