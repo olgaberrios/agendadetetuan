@@ -11,6 +11,17 @@
     "created_at": "2026-05-31T07:54:29.492215+00:00"
   },
   {
+    "id": "035bec84bc",
+    "title": "Taller Diseño del Huerto",
+    "datetime": "2026-05-31T18:00:00",
+    "end_datetime": null,
+    "location": "Huerto Comunitario Bellas Vistas, Calle Tenerife 7, Tetuán, Madrid",
+    "description": "Vamos a diseñar los diferentes espacios del huerto. Elección de espacios, problemas y soluciones.",
+    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/035bec84bc.jpg",
+    "source_id": "img_45",
+    "created_at": "2026-05-31T07:57:35.742871+00:00"
+  },
+  {
     "id": "56b8c9f458",
     "title": "Club de lectura: Las mejores historias jamás contadas",
     "datetime": "2026-06-01T12:00:00",
