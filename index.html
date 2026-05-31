@@ -1111,7 +1111,7 @@
       <button class="modal-close" id="modal-close">✕</button>
     </div>
     <div id="modal-meta"></div>
-    <img id="modal-img" src="" alt="Cartel" style="display:none;width:100%;border-radius:10px;margin-bottom:14px;object-fit:cover;max-height:300px;" />
+    <img id="modal-img" src="" alt="Cartel" style="display:none;width:100%;border-radius:10px;margin-bottom:14px;object-fit:contain;" />
     <div class="modal-desc" id="modal-desc"></div>
     <div class="modal-actions" id="modal-actions"></div>
   </div>
@@ -1340,7 +1340,7 @@ function renderEvents(f) {
           <div class="date-month">${MESES[mes]}</div>
         </div>
         <div class="card-info">
-          <div class="event-title">${ev.title}${esHoy?'<span class="badge-hoy">Hoy</span>':''}</div>
+          <div class="event-title" onclick="openModal(${i})" style="cursor:pointer;">${ev.title}${esHoy?'<span class="badge-hoy">Hoy</span>':''}</div>
           <div class="meta-item"><span class="meta-icon">🕐</span>${DIAS[d.getDay()]} · ${hora}</div>
           ${ev.location?`<div class="meta-item"><span class="meta-icon">📍</span>${ev.location}</div>`:''}
         </div>
@@ -1580,7 +1580,6 @@ async function deleteEvent(id){
 // ─── GUARDAR EN GITHUB ────────────────────────────────────────────────────────
 async function saveEvents(){
   if(!GITHUB_REPO||!GITHUB_TOKEN){
-    // Sin GitHub configurado: descarga el JSON para que lo subas manualmente
     const b=new Blob([JSON.stringify(allEvents,null,2)],{type:'application/json'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(b);
@@ -1591,11 +1590,23 @@ async function saveEvents(){
   try{
     const api=`https://api.github.com/repos/${GITHUB_REPO}/contents/events.json`;
     const getR=await fetch(api,{headers:{'Authorization':`token ${GITHUB_TOKEN}`,'Accept':'application/vnd.github.v3+json'}});
-    const sha=getR.ok?(await getR.json()).sha:undefined;
-    const content=btoa(unescape(encodeURIComponent(JSON.stringify(allEvents,null,2))));
-    await fetch(api,{method:'PUT',headers:{'Authorization':`token ${GITHUB_TOKEN}`,'Content-Type':'application/json'},
-      body:JSON.stringify({message:'🗓️ Evento editado desde el panel admin',content,...(sha?{sha}:{})})});
-  }catch(e){console.error('GitHub save error',e);}
+    if(!getR.ok) throw new Error('No se pudo leer events.json: '+getR.status);
+    const fileData=await getR.json();
+    const sha=fileData.sha;
+    const jsonStr=JSON.stringify(allEvents,null,2);
+    // Encode to base64 properly handling UTF-8
+    const b64=btoa(encodeURIComponent(jsonStr).replace(/%([0-9A-F]{2})/g,(_,p1)=>String.fromCharCode('0x'+p1)));
+    const putR=await fetch(api,{method:'PUT',headers:{'Authorization':`token ${GITHUB_TOKEN}`,'Content-Type':'application/json'},
+      body:JSON.stringify({message:'Evento editado desde el panel admin',content:b64,sha})});
+    if(!putR.ok){
+      const err=await putR.json();
+      throw new Error('GitHub error: '+JSON.stringify(err));
+    }
+    console.log('✅ Guardado en GitHub');
+  }catch(e){
+    console.error('GitHub save error',e);
+    alert('Error al guardar: '+e.message);
+  }
 }
 
 function showMsg(id,text,type='ok'){
@@ -1671,16 +1682,52 @@ window.addEventListener('appinstalled', () => {
 
 // ─── PWA: NOTIFICACIONES ─────────────────────────────────────────────────────
 document.getElementById('btn-notif').onclick = async () => {
-  const perm = await Notification.requestPermission();
-  document.getElementById('notif-banner').classList.remove('show');
-  if (perm === 'granted') {
-    localStorage.setItem('notif-enabled', '1');
-    new Notification('Notificaciones activadas', {
-      body: 'Te avisaremos de nuevos eventos en Tetuán',
-      icon: '/icon-192.png'
-    });
+  try {
+    const perm = await Notification.requestPermission();
+    document.getElementById('notif-banner').classList.remove('show');
+    if (perm === 'granted') {
+      localStorage.setItem('notif-enabled', '1');
+      localStorage.setItem('notif-last-count', allEvents.length);
+      new Notification('✅ Agenda Tetuán', {
+        body: 'Notificaciones activadas. Te avisaremos de nuevos eventos.',
+        icon: './icon-192.png',
+        badge: './icon-192.png'
+      });
+      // Check for new events every 30 min
+      startNotifPolling();
+    } else {
+      alert('Para activar notificaciones, permite el acceso en la configuración de tu navegador.');
+    }
+  } catch(e) {
+    console.log('Notif error:', e);
+    document.getElementById('notif-banner').classList.remove('show');
   }
 };
+
+function startNotifPolling() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  setInterval(async () => {
+    try {
+      const r = await fetch(EVENTS_JSON_URL + '?t=' + Date.now(), {cache: 'no-store'});
+      const fresh = await r.json();
+      const lastCount = parseInt(localStorage.getItem('notif-last-count') || '0');
+      if (fresh.length > lastCount) {
+        const newest = fresh[fresh.length - 1];
+        new Notification('🗓️ Nuevo evento en Tetuán', {
+          body: newest.title + (newest.location ? ' · ' + newest.location : ''),
+          icon: './icon-192.png',
+          badge: './icon-192.png'
+        });
+        localStorage.setItem('notif-last-count', fresh.length);
+      }
+    } catch(e) { console.log('Notif poll error', e); }
+  }, 30 * 60 * 1000); // cada 30 minutos
+}
+
+// Reactivar polling si ya tenía notificaciones
+if (localStorage.getItem('notif-enabled') === '1' && Notification.permission === 'granted') {
+  startNotifPolling();
+}
 
 document.getElementById('btn-notif-dismiss').onclick = () => {
   document.getElementById('notif-banner').classList.remove('show');
