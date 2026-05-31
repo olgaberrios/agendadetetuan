@@ -505,7 +505,7 @@
       line-height: 1.7;
       color: var(--gris-texto);
       margin: 16px 0 20px;
-      white-space: pre-wrap;
+      white-space: pre-wrap; word-break: break-word;
     }
 
     .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -1017,6 +1017,14 @@
     }
     .faq-a a { color: var(--azul); }
   </style>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F4SPJ6S3CE"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-F4SPJ6S3CE');
+</script>
 </head>
 <body>
 
@@ -1232,6 +1240,7 @@
       <button id="faq-close">✕</button>
     </div>
     <div class="faq-body">
+      <div class="faq-item"><div class="faq-q">¿Qué puedo hacer con la web?</div><div class="faq-a">Además de consultar las actividades del distrito, puedes:<br><br>• Ver los eventos organizados por fecha, con filtros por semana o mes.<br>• Añadir cualquier evento a tu calendario personal (Google Calendar, Outlook, Apple Calendar...).<br>• Compartir eventos con otras personas mediante enlace o redes sociales.<br>• Instalar la web como app en tu móvil para tenerla siempre a mano (sin necesidad de descargarla de ninguna tienda).<br>• Activar notificaciones para enterarte de nuevos eventos sin tener que entrar.<br>• Descubrir colectivos, espacios y proyectos que desarrollan actividades en Tetuán.<br><br>La idea es que te resulte más fácil enterarte de lo que ocurre en el barrio y participar en aquello que te interese.</div></div>
       <div class="faq-item"><div class="faq-q">¿Qué es Agenda Tetuán?</div><div class="faq-a">Es una página web y unos canales de Telegram y WhatsApp donde se comparte información sobre actividades culturales, de ocio, vecinales y activistas que tienen lugar en el distrito de Tetuán, en Madrid.<br><br>Su objetivo es facilitar que la información circule entre colectivos, asociaciones y vecinas, y que más personas conozcan lo que ocurre en el barrio.</div></div>
       <div class="faq-item"><div class="faq-q">¿Quiénes somos?</div><div class="faq-a">Somos personas que participamos en diferentes colectivos de Tetuán y que creemos que una agenda común puede ayudar a fortalecer la vida comunitaria del distrito.</div></div>
       <div class="faq-item"><div class="faq-q">¿Cómo funciona esta web?</div><div class="faq-a">La web publica automáticamente las actividades que se comparten en el canal de Telegram de Agenda Tetuán.<br><br>El canal de WhatsApp también difunde las actividades, pero actualmente no está conectado con la web porque la integración técnica era bastante más compleja.</div></div>
@@ -1241,6 +1250,8 @@
       <div class="faq-item"><div class="faq-q">¿Qué tipo de actividades se publican?</div><div class="faq-a">Actividades culturales, sociales, vecinales, educativas, reivindicativas, deportivas o de ocio relacionadas con Tetuán.<br><br>Nos reservamos la posibilidad de no publicar contenidos que contradigan los valores de convivencia, respeto e inclusión que promueve el proyecto.</div></div>
       <div class="faq-item"><div class="faq-q">¿Por qué no aparece mi actividad en la web?</div><div class="faq-a">Porque la publicación no es inmediata, porque falta información relevante (fecha, hora o lugar) o porque ha habido algún error técnico.</div></div>
       <div class="faq-item"><div class="faq-q">¿Alguien se beneficia económicamente de esta web?</div><div class="faq-a">No. Está hecha en tiempo libre y con herramientas gratuitas.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Con qué frecuencia se actualiza la web?</div><div class="faq-a">La web se actualiza automáticamente en pocos minutos desde que se publica algo en el canal de Telegram. Puede haber algún pequeño retraso técnico puntual, pero en general la información aparece casi en tiempo real.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Qué pasa con mi privacidad?</div><div class="faq-a">La web solo muestra información que ya es pública: la que se publica voluntariamente en el canal de Telegram de Agenda Tetuán, que es un canal abierto al que puede acceder cualquier persona.<br><br>No recogemos ningún dato personal de las personas que visitan la web. No hay registro, no hay cookies de seguimiento, no hay analítica de usuario.<br><br>Si publicas algo en el canal de Telegram y no quieres que aparezca en la web, puedes contactar con nosotras para retirarlo.</div></div>
       <div class="faq-item"><div class="faq-q">¿Cómo puedo contactar?</div><div class="faq-a">Contacta con Olga Berrios a través de Instagram: <a href="https://www.instagram.com/olguitaberrios" target="_blank">@olguitaberrios</a></div></div>
     </div>
   </div>
@@ -1347,7 +1358,7 @@ function renderEvents(f) {
           ${ev.location?`<div class="meta-item"><span class="meta-icon">📍</span>${ev.location}</div>`:''}
         </div>
       </div>
-      ${ev.description?`<div class="event-desc">${ev.description}</div>`:''}
+      ${ev.description?`<div class="event-desc">${linkify(ev.description)}</div>`:''}
       ${ev.image_url?`<img src="${ev.image_url}?t=${Date.now()}" alt="Cartel del evento" style="width:100%;border-radius:8px;margin-top:4px;object-fit:cover;max-height:220px;" loading="lazy" onerror="this.style.display='none'" />`:''}
       <div class="card-actions">
         <a class="btn-gcal" href="${buildGCalUrl(ev)}" target="_blank">📅 Google Calendar</a>
@@ -1403,7 +1414,7 @@ function openModal(idx){
   document.getElementById('modal-meta').innerHTML=`
     <div class="meta-item"><span class="meta-icon">📅</span>${DIAS[d.getDay()]}, ${d.getDate()} de ${MESES_L[d.getMonth()]} · ${hora}</div>
     ${ev.location?`<div class="meta-item"><span class="meta-icon">📍</span>${ev.location}</div>`:''}`;
-  document.getElementById('modal-desc').textContent=ev.description||'';
+  document.getElementById('modal-desc').innerHTML=linkify(ev.description||'');
   const imgEl=document.getElementById('modal-img');
   if(ev.image_url){
     imgEl.src=ev.image_url+'?t='+Date.now();
@@ -1750,6 +1761,23 @@ if ('serviceWorker' in navigator) {
       }
     });
   });
+}
+
+// ─── LINKIFY ─────────────────────────────────────────────────────────────────
+function linkify(text) {
+  if (!text) return '';
+  // Escapar HTML primero
+  const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // URLs
+  const withLinks = escaped.replace(
+    /(https?:\/\/[^\s]+)/g,
+    '<a href="$1" target="_blank" rel="noopener" style="color:var(--azul);word-break:break-all;">$1</a>'
+  );
+  // Emails
+  return withLinks.replace(
+    /([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/g,
+    '<a href="mailto:$1" style="color:var(--azul);">$1</a>'
+  );
 }
 
 // ─── FAQ ─────────────────────────────────────────────────────────────────────

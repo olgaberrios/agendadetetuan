@@ -54,26 +54,43 @@ except Exception as e:
     import sys; sys.exit(1)
 
 # ─── PROMPT ───────────────────────────────────────────────────────────────────
-PROMPT = f"""Eres un asistente que extrae información de eventos culturales y vecinales del
-barrio de Tetuán (Madrid) a partir de mensajes de Telegram (texto o carteles).
+PROMPT = f"""Eres un asistente que extrae informacion de eventos culturales y vecinales del
+barrio de Tetuan (Madrid) a partir de mensajes de Telegram (texto o carteles).
 
-Devuelve SOLO un objeto JSON con esta estructura (sin texto adicional ni bloques de código):
+Devuelve SOLO un array JSON (sin texto adicional ni bloques de codigo).
+Normalmente tendra un elemento, pero puede tener varios (ver reglas).
 
+Cada elemento:
 {{
   "es_evento": true o false,
-  "title": "Título del evento",
+  "title": "Titulo del evento",
   "datetime": "YYYY-MM-DDTHH:MM:SS",
   "end_datetime": "YYYY-MM-DDTHH:MM:SS o null",
-  "location": "Lugar del evento o null",
-  "description": "Descripción completa"
+  "location": "Lugar o null",
+  "description": "Descripcion completa"
 }}
 
-Reglas:
-- Si el mensaje NO anuncia un evento concreto, devuelve {{"es_evento": false}}.
-- datetime es OBLIGATORIO si es_evento es true. Sin hora usa 00:00:00.
-- El año actual es {datetime.now().year}. Hoy es {datetime.now().strftime("%Y-%m-%d")}.
-- Calcula fechas relativas como "este viernes" o "mañana" respecto a hoy.
-- Responde ÚNICAMENTE con el JSON."""
+Reglas generales:
+- Si NO hay ningun evento concreto, devuelve [{"es_evento": false}].
+- datetime obligatorio si es_evento es true. Sin hora usa 00:00:00.
+- El anno actual es {datetime.now().year}. Hoy es {datetime.now().strftime("%Y-%m-%d")}.
+- Calcula fechas relativas como "este viernes" o "manana" respecto a hoy.
+- NO inventes informacion. Usa solo lo que aparece en el texto o imagen.
+- Copia titulos y descripciones tal como aparecen, sin reescribirlos.
+
+Horarios recurrentes (sin fecha concreta):
+- Si el cartel muestra un horario semanal (ej: "Miercoles 18-19h, Sabado 12-14h"),
+  crea UN evento por cada ocurrencia, con las 2 proximas fechas de cada dia de la semana.
+  Ejemplo: "Miercoles y Sabado" = 4 eventos (2 miercoles + 2 sabados proximos).
+- El titulo de cada evento debe incluir el nombre de la actividad.
+
+Ubicaciones especiales:
+- Si es una emisora de radio, pon el nombre en location y la frecuencia/web en description.
+- Si es una URL, ponla en location tal cual.
+- Si no hay direccion fisica, pon el nombre del espacio o medio, no null.
+
+Responde UNICAMENTE con el array JSON."""
+
 
 # ─── LLAMADA A OPENROUTER ─────────────────────────────────────────────────────
 # Modelos gratuitos con soporte de imágenes, en orden de preferencia
@@ -122,28 +139,38 @@ def call_openrouter(messages: list, vision: bool = False) -> str | None:
     return None
 
 # ─── EXTRAER EVENTO ───────────────────────────────────────────────────────────
-def extract_from_text(text: str) -> dict | None:
+def extract_events(raw: str) -> list[dict]:
+    """Parsea la respuesta JSON del modelo y devuelve lista de eventos válidos."""
+    if not raw:
+        return []
+    try:
+        clean = raw.replace("```json", "").replace("```", "").strip()
+        data  = json.loads(clean)
+        # Puede ser array o dict único
+        items = data if isinstance(data, list) else [data]
+        return [e for e in items if isinstance(e, dict) and e.get("es_evento")]
+    except Exception as e:
+        log.error(f"Error parseando JSON: {e} | raw: {raw[:200]}")
+        return []
+
+def extract_from_text(text: str) -> list[dict]:
     try:
         raw = call_openrouter([
             {"role": "system", "content": PROMPT},
             {"role": "user", "content": text}
         ])
-        if not raw:
-            return None
-        clean = raw.replace("```json", "").replace("```", "").strip()
-        data  = json.loads(clean)
-        return data if data.get("es_evento") else None
+        return extract_events(raw)
     except Exception as e:
         log.error(f"Error extrayendo texto: {e}")
-        return None
+        return []
 
-def extract_from_image(image_bytes: bytes, caption: str = "") -> dict | None:
+def extract_from_image(image_bytes: bytes, caption: str = "") -> list[dict]:
     try:
         b64  = base64.standard_b64encode(image_bytes).decode("utf-8")
         text = PROMPT
         if caption:
             text += f"\n\nTexto que acompaña la imagen: {caption}"
-        text += "\n\nAnaliza el cartel y extrae el evento."
+        text += "\n\nAnaliza el cartel y extrae el/los evento/s."
 
         raw = call_openrouter([
             {"role": "system", "content": PROMPT},
@@ -152,14 +179,10 @@ def extract_from_image(image_bytes: bytes, caption: str = "") -> dict | None:
                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}}
             ]}
         ])
-        if not raw:
-            return None
-        clean = raw.replace("```json", "").replace("```", "").strip()
-        data  = json.loads(clean)
-        return data if data.get("es_evento") else None
+        return extract_events(raw)
     except Exception as e:
         log.error(f"Error extrayendo imagen: {e}")
-        return None
+        return []
 
 # ─── GITHUB: LEER Y ESCRIBIR events.json ─────────────────────────────────────
 def load_events() -> tuple[list, str]:
@@ -296,13 +319,14 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not msg or not msg.text:
         return
     log.info(f"📨 Texto recibido (id={msg.message_id})")
-    event_data = extract_from_text(msg.text)
-    if not event_data:
+    events = extract_from_text(msg.text)
+    if not events:
         log.info("   → No es un evento, ignorando")
         return
-    log.info(f"   → Evento: {event_data.get('title')}")
-    ok = add_event(event_data, source_id=str(msg.message_id))
-    await notify_admin(context, event_data, ok)
+    for i, event_data in enumerate(events):
+        log.info(f"   → Evento {i+1}/{len(events)}: {event_data.get('title')}")
+        ok = add_event(event_data, source_id=f"{msg.message_id}_{i}")
+        await notify_admin(context, event_data, ok)
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = update.channel_post or update.message
@@ -314,13 +338,16 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buf     = BytesIO()
     await tg_file.download_to_memory(buf)
     image_bytes = buf.getvalue()
-    event_data = extract_from_image(image_bytes, msg.caption or "")
-    if not event_data:
+    events = extract_from_image(image_bytes, msg.caption or "")
+    if not events:
         log.info("   → Sin evento reconocible, ignorando")
         return
-    log.info(f"   → Evento en imagen: {event_data.get('title')}")
-    ok = add_event(event_data, source_id=f"img_{msg.message_id}", image_bytes=image_bytes)
-    await notify_admin(context, event_data, ok)
+    for i, event_data in enumerate(events):
+        log.info(f"   → Evento {i+1}/{len(events)} en imagen: {event_data.get('title')}")
+        # Solo el primero lleva la imagen; los siguientes (horarios recurrentes) no
+        img = image_bytes if i == 0 else None
+        ok = add_event(event_data, source_id=f"img_{msg.message_id}_{i}", image_bytes=img)
+        await notify_admin(context, event_data, ok)
 
 # ─── API KEY PARA EL PANEL ADMIN ─────────────────────────────────────────────
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "165db66c54673e7b364301cf0f986a5761c9149d5da589139eb525bda7e89e19")
