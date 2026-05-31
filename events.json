@@ -55,6 +55,17 @@
     "created_at": "2026-05-31T08:01:33.068888+00:00"
   },
   {
+    "id": "ac0508ffa2",
+    "title": "Un enemigo del pueblo",
+    "datetime": "2026-06-04T19:00:00",
+    "end_datetime": null,
+    "location": "Centro Sociocultural José de Espronceda (Tetuán), Calle Almansi, 9, Madrid",
+    "description": "Teatro: 'Un enemigo del pueblo' de Henrik Ibsen. A cargo de la cía. Teatro El Globo. El doctor Stockmann, médico del balneario de su ciudad, descubre que las aguas están infectadas y que constituyen un peligro para la salud de la población. Comunica su descubrimiento a Olivia, directora del periódico 'La Voz del Pueblo'. Duración: 60 minutos. Edad recomendada: a partir de 13 años. Gratuito.",
+    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/ac0508ffa2.jpg",
+    "source_id": "img_56",
+    "created_at": "2026-05-31T08:06:33.733199+00:00"
+  },
+  {
     "id": "d81d6736d5",
     "title": "Rock your heart out",
     "datetime": "2026-06-05T19:00:00",
