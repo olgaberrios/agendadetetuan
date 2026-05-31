@@ -1248,7 +1248,7 @@ function renderEvents(f) {
         </div>
       </div>
       ${ev.description?`<div class="event-desc">${ev.description}</div>`:''}
-      ${ev.image_url?`<img src="${ev.image_url}" alt="Cartel del evento" style="width:100%;border-radius:8px;margin-top:4px;object-fit:cover;max-height:220px;" loading="lazy" />`:''}
+      ${ev.image_url?`<img src="${ev.image_url}?t=${Date.now()}" alt="Cartel del evento" style="width:100%;border-radius:8px;margin-top:4px;object-fit:cover;max-height:220px;" loading="lazy" onerror="this.style.display='none'" />`:''}
       <div class="card-actions">
         <a class="btn-gcal" href="${buildGCalUrl(ev)}" target="_blank">📅 Google Calendar</a>
         <a class="btn-ics" href="#" onclick="dlICS(${i},event)">⬇ .ICS</a>
@@ -1471,6 +1471,14 @@ async function deleteEvent(id){
 
 // ─── GUARDAR EN GITHUB ────────────────────────────────────────────────────────
 async function saveEvents(){
+  // Invalidar caché del SW para events.json
+  if('caches' in window){
+    const keys = await caches.keys();
+    for(const key of keys){
+      const cache = await caches.open(key);
+      await cache.delete(new Request(EVENTS_JSON_URL));
+    }
+  }
   if(!GITHUB_REPO||!GITHUB_TOKEN){
     // Sin GitHub configurado: descarga el JSON para que lo subas manualmente
     const b=new Blob([JSON.stringify(allEvents,null,2)],{type:'application/json'});
