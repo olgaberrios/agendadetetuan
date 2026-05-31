@@ -231,10 +231,34 @@ def cleanup_past_images():
     except Exception as e:
         log.error(f"Error en limpieza: {e}")
 
+def image_hash(image_bytes: bytes) -> str:
+    """Hash simple de la imagen para detectar carteles repetidos."""
+    return hashlib.md5(image_bytes).hexdigest()
+
+def is_duplicate_event(event_data: dict, events: list, img_hash: str = None) -> bool:
+    """Detecta si el evento ya existe por título+fecha o por hash de imagen."""
+    title = event_data.get("title", "").lower().strip()
+    dt    = event_data.get("datetime", "")[:10]  # solo la fecha YYYY-MM-DD
+    for ev in events:
+        # Duplicado por hash de imagen (mismo cartel reenviado)
+        if img_hash and ev.get("image_hash") == img_hash:
+            log.info(f"  Cartel duplicado (mismo hash), ignorando")
+            return True
+        # Duplicado por título similar y misma fecha
+        ev_title = ev.get("title", "").lower().strip()
+        ev_dt    = ev.get("datetime", "")[:10]
+        if dt and ev_dt == dt and (title == ev_title or (len(title) > 10 and title in ev_title) or (len(ev_title) > 10 and ev_title in title)):
+            log.info(f"  Evento duplicado (mismo título+fecha), ignorando")
+            return True
+    return False
+
 def add_event(event_data: dict, source_id: str, image_bytes: bytes = None) -> bool:
     events, sha = load_events()
     if any(e.get("source_id") == source_id for e in events):
-        log.info(f"Duplicado, ignorando: {source_id}")
+        log.info(f"Duplicado por source_id, ignorando: {source_id}")
+        return False
+    img_hash = image_hash(image_bytes) if image_bytes else None
+    if is_duplicate_event(event_data, events, img_hash):
         return False
     event_id = hashlib.md5(f"{source_id}{event_data.get('datetime','')}".encode()).hexdigest()[:10]
     image_url = None
@@ -248,6 +272,7 @@ def add_event(event_data: dict, source_id: str, image_bytes: bytes = None) -> bo
         "location":     event_data.get("location"),
         "description":  event_data.get("description", ""),
         "image_url":    image_url,
+        "image_hash":   img_hash,
         "source_id":    source_id,
         "created_at":   datetime.now(timezone.utc).isoformat(),
     })

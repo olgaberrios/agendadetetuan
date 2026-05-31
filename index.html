@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agenda Tetuán</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 54 54'><rect x='7' y='7' width='40' height='40' rx='6' fill='%23E3051B' transform='rotate(45 27 27)'/><rect x='14' y='14' width='26' height='26' rx='3' fill='%23fff' transform='rotate(45 27 27)'/><text x='27' y='33' text-anchor='middle' font-family='serif' font-size='17' font-weight='700' fill='%23E3051B'>T</text></svg>" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#003DA5" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -940,6 +941,81 @@
       .events-grid { grid-template-columns: 1fr; }
       .form-row { grid-template-columns: 1fr; }
     }
+
+    /* ── FAQ MODAL ── */
+    .faq-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 500;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px;
+      overflow-y: auto;
+    }
+    .faq-overlay.open { display: flex; }
+    .faq-box {
+      background: var(--blanco);
+      border-radius: 16px;
+      max-width: 680px;
+      width: 100%;
+      margin: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      overflow: hidden;
+    }
+    .faq-header {
+      background: var(--azul);
+      color: #fff;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .faq-header h2 {
+      font-family: 'Fraunces', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .faq-header button {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: #fff;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .faq-body { padding: 28px; }
+    .faq-item {
+      border-bottom: 1px solid var(--gris-borde);
+      padding: 16px 0;
+    }
+    .faq-item:last-child { border-bottom: none; }
+    .faq-q {
+      font-family: 'Fraunces', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--azul);
+      margin-bottom: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .faq-q::before {
+      content: '›';
+      font-size: 1.2rem;
+      color: var(--rojo);
+      flex-shrink: 0;
+      line-height: 1.2;
+    }
+    .faq-a {
+      font-size: 0.85rem;
+      color: var(--gris-texto);
+      line-height: 1.7;
+    }
+    .faq-a a { color: var(--azul); }
   </style>
 </head>
 <body>
@@ -1148,6 +1224,28 @@
   </div>
 </div>
 
+<!-- FAQ MODAL -->
+<div class="faq-overlay" id="faq-overlay">
+  <div class="faq-box">
+    <div class="faq-header">
+      <h2>Preguntas frecuentes</h2>
+      <button id="faq-close">✕</button>
+    </div>
+    <div class="faq-body">
+      <div class="faq-item"><div class="faq-q">¿Qué es Agenda Tetuán?</div><div class="faq-a">Es una página web y unos canales de Telegram y WhatsApp donde se comparte información sobre actividades culturales, de ocio, vecinales y activistas que tienen lugar en el distrito de Tetuán, en Madrid.<br><br>Su objetivo es facilitar que la información circule entre colectivos, asociaciones y vecinas, y que más personas conozcan lo que ocurre en el barrio.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Quiénes somos?</div><div class="faq-a">Somos personas que participamos en diferentes colectivos de Tetuán y que creemos que una agenda común puede ayudar a fortalecer la vida comunitaria del distrito.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Cómo funciona esta web?</div><div class="faq-a">La web publica automáticamente las actividades que se comparten en el canal de Telegram de Agenda Tetuán.<br><br>El canal de WhatsApp también difunde las actividades, pero actualmente no está conectado con la web porque la integración técnica era bastante más compleja.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Cómo está hecha?</div><div class="faq-a">Es un proyecto autogestionado construido combinando varias herramientas, con programación realizada principalmente mediante IA:<br><br>• Un bot de Telegram<br>• Un repositorio alojado en GitHub<br>• Un servidor en Render<br>• Modelos de IA a través de OpenRouter para leer, extraer y clasificar la información de carteles e imágenes<br><br>Todo el código es de software libre y el proyecto se mantiene de forma voluntaria.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Cómo puedo publicar información en Agenda Tetuán?</div><div class="faq-a">Si quieres publicar una actividad puntual, puedes enviarnos el cartel o la información básica y la publicaremos.<br><br>Si formas parte de un colectivo que organiza actividades de forma habitual, podéis incorporaros al grupo de administradoras de los canales para publicar directamente.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Cuánto cuesta publicar?</div><div class="faq-a">Nada. Agenda Tetuán es un proyecto sin ánimo de lucro y la publicación de actividades es completamente gratuita.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Qué tipo de actividades se publican?</div><div class="faq-a">Actividades culturales, sociales, vecinales, educativas, reivindicativas, deportivas o de ocio relacionadas con Tetuán.<br><br>Nos reservamos la posibilidad de no publicar contenidos que contradigan los valores de convivencia, respeto e inclusión que promueve el proyecto.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Por qué no aparece mi actividad en la web?</div><div class="faq-a">Porque la publicación no es inmediata, porque falta información relevante (fecha, hora o lugar) o porque ha habido algún error técnico.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Alguien se beneficia económicamente de esta web?</div><div class="faq-a">No. Está hecha en tiempo libre y con herramientas gratuitas.</div></div>
+      <div class="faq-item"><div class="faq-q">¿Cómo puedo contactar?</div><div class="faq-a">Contacta con Olga Berrios a través de Instagram: <a href="https://www.instagram.com/olguitaberrios" target="_blank">@olguitaberrios</a></div></div>
+    </div>
+  </div>
+</div>
+
 <!-- FOOTER -->
 <footer>
   <div style="margin-bottom:10px;font-size:0.8rem;color:var(--negro);font-weight:600;">Únete a nuestros canales</div>
@@ -1161,7 +1259,7 @@
       WhatsApp
     </a>
   </div>
-  Agenda Tetuán · <a href="https://t.me/agendatetuan" target="_blank">@agendatetuan</a>
+  Agenda Tetuán · <a href="https://t.me/agendatetuan" target="_blank">@agendatetuan</a> · <button onclick="document.getElementById('faq-overlay').classList.add('open')" style="background:none;border:none;color:var(--azul);cursor:pointer;font-size:0.75rem;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;">Preguntas frecuentes</button>
 </footer>
 
 <script>
@@ -1304,6 +1402,14 @@ function openModal(idx){
     <div class="meta-item"><span class="meta-icon">📅</span>${DIAS[d.getDay()]}, ${d.getDate()} de ${MESES_L[d.getMonth()]} · ${hora}</div>
     ${ev.location?`<div class="meta-item"><span class="meta-icon">📍</span>${ev.location}</div>`:''}`;
   document.getElementById('modal-desc').textContent=ev.description||'';
+  const imgEl=document.getElementById('modal-img');
+  if(ev.image_url){
+    imgEl.src=ev.image_url+'?t='+Date.now();
+    imgEl.style.display='block';
+    imgEl.onerror=()=>imgEl.style.display='none';
+  } else {
+    imgEl.style.display='none';
+  }
   document.getElementById('modal-actions').innerHTML=`
     <a class="btn-gcal" href="${buildGCalUrl(ev)}" target="_blank">📅 Google Calendar</a>
     <a class="btn-ics" href="#" onclick="dlICS(${idx},event)">⬇ .ICS</a>`;
@@ -1455,30 +1561,24 @@ document.getElementById('btn-update-event').onclick=async()=>{
 document.getElementById('btn-delete-event').onclick=async()=>{
   if(!confirm('¿Seguro que quieres borrar este evento?'))return;
   allEvents=allEvents.filter(e=>e.id!==editingId);
-  await saveEvents();
-  setTimeout(async()=>{await loadEvents();renderAdminList();},2000);
+  renderEvents(currentFilter);
   document.getElementById('edit-overlay').classList.remove('open');
   showMsg('list-msg','✅ Evento borrado');
+  await saveEvents();
+  renderAdminList();
 };
 
 async function deleteEvent(id){
   if(!confirm('¿Seguro que quieres borrar este evento?'))return;
   allEvents=allEvents.filter(e=>e.id!==id);
-  await saveEvents();
-  setTimeout(async()=>{await loadEvents();renderAdminList();},2000);
+  renderEvents(currentFilter);
   showMsg('list-msg','✅ Evento borrado');
+  await saveEvents();
+  renderAdminList();
 }
 
 // ─── GUARDAR EN GITHUB ────────────────────────────────────────────────────────
 async function saveEvents(){
-  // Invalidar caché del SW para events.json
-  if('caches' in window){
-    const keys = await caches.keys();
-    for(const key of keys){
-      const cache = await caches.open(key);
-      await cache.delete(new Request(EVENTS_JSON_URL));
-    }
-  }
   if(!GITHUB_REPO||!GITHUB_TOKEN){
     // Sin GitHub configurado: descarga el JSON para que lo subas manualmente
     const b=new Blob([JSON.stringify(allEvents,null,2)],{type:'application/json'});
@@ -1599,6 +1699,14 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
+
+// ─── FAQ ─────────────────────────────────────────────────────────────────────
+document.getElementById('faq-close').onclick = () =>
+  document.getElementById('faq-overlay').classList.remove('open');
+document.getElementById('faq-overlay').onclick = e => {
+  if(e.target === document.getElementById('faq-overlay'))
+    document.getElementById('faq-overlay').classList.remove('open');
+};
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 loadEvents();
