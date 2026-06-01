@@ -1,38 +1,5 @@
 [
   {
-    "id": "c6efdbfac9",
-    "title": "La Dehesa de Cine",
-    "datetime": "2026-05-31T11:00:00",
-    "end_datetime": null,
-    "location": "CIEA Dehesa de la Villa",
-    "description": "Proyección de 6 cortometrajes de ficción, animación y documentales con una temática común: concienciar sobre el respeto y el cuidado de nuestro entorno y nuestro planeta. Evento para mayores de 12 años. Inscripciones por teléfono al 914 80 21 41 o correo infodehesa@madrid.es.",
-    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/c6efdbfac9.jpg",
-    "source_id": "img_42",
-    "created_at": "2026-05-31T07:54:29.492215+00:00"
-  },
-  {
-    "id": "746e86ae1c",
-    "title": "Danzas del Mundo",
-    "datetime": "2026-05-31T12:00:00",
-    "end_datetime": "2026-05-31T14:00:00",
-    "location": "Dehesa de la Villa",
-    "description": "Danzas del Mundo con la charanga de Palomeras Bajas,ފ in Dehesa de la Villa, tres temas relacionados con la democracias islamistas y tratando los temas médicos actuales.",
-    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/746e86ae1c.jpg",
-    "source_id": "img_47",
-    "created_at": "2026-05-31T07:58:43.637502+00:00"
-  },
-  {
-    "id": "035bec84bc",
-    "title": "Taller Diseño del Huerto",
-    "datetime": "2026-05-31T18:00:00",
-    "end_datetime": null,
-    "location": "Huerto Comunitario Bellas Vistas, Calle Tenerife 7, Tetuán, Madrid",
-    "description": "Vamos a diseñar los diferentes espacios del huerto. Elección de espacios, problemas y soluciones.",
-    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/035bec84bc.jpg",
-    "source_id": "img_45",
-    "created_at": "2026-05-31T07:57:35.742871+00:00"
-  },
-  {
     "id": "56b8c9f458",
     "title": "Club de lectura: Las mejores historias jamás contadas",
     "datetime": "2026-06-01T12:00:00",
