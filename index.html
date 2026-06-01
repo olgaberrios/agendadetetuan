@@ -1069,10 +1069,20 @@
   <button class="btn-dismiss" id="btn-notif-dismiss">✕</button>
 </div>
 
-<!-- TAGLINE -->
+<!-- BARRIOS -->
 <div class="barrios-bar">
-  <div style="max-width:1100px;margin:0 auto;padding:0 24px;text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.9);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;">
-    actividades de ocio, cultura y reivindicativas en el distrito de tetuán, madrid
+  <div class="barrios-inner">
+    <div class="barrio-item"><div class="barrio-dot"></div>Cuatro Caminos</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item"><div class="barrio-dot"></div>Bellas Vistas</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item activo"><div class="barrio-dot"></div>Berruguete</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item"><div class="barrio-dot"></div>Ventilla-Almenara</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item"><div class="barrio-dot"></div>Cuzco-Castillejos</div>
+    <div class="barrio-line"></div>
+    <div class="barrio-item"><div class="barrio-dot"></div>Valdeacederas</div>
   </div>
 </div>
 
@@ -1260,7 +1270,7 @@
       WhatsApp
     </a>
   </div>
-  Agenda Tetuán · <a href="https://t.me/agendatetuan" target="_blank">@agendatetuan</a> · <a href="#" onclick="downloadRSS();return false;">📡 Suscríbete por RSS</a> · <button onclick="document.getElementById('faq-overlay').classList.add('open')" style="background:none;border:none;color:var(--azul);cursor:pointer;font-size:0.75rem;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;">Preguntas frecuentes</button>
+  Agenda Tetuán · <a href="https://t.me/agendatetuan" target="_blank">@agendatetuan</a> · <button onclick="document.getElementById('faq-overlay').classList.add('open')" style="background:none;border:none;color:var(--azul);cursor:pointer;font-size:0.75rem;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;">Preguntas frecuentes</button>
 </footer>
 
 <script>
@@ -1291,7 +1301,7 @@ let editingId    = null;
 // ─── CARGAR EVENTOS ───────────────────────────────────────────────────────────
 async function loadEvents() {
   try {
-    const r = await fetch(EVENTS_JSON_URL + '?v=' + Date.now(), {cache: 'no-store', headers: {'Pragma': 'no-cache', 'Cache-Control': 'no-cache'}});
+    const r = await fetch(EVENTS_JSON_URL + '?nocache=' + Date.now(), {cache: 'no-store'});
     if (!r.ok) throw new Error();
     allEvents = await r.json();
     allEvents.sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
@@ -1335,7 +1345,6 @@ function renderEvents(f) {
       lastMonth = mes;
     }
     const esHoy = isToday(d);
-    const eventIcon = getEventIcon(ev.title + ' ' + (ev.description||''));
     const hora  = d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
     html += `<div class="event-card">
       <div class="card-top">
@@ -1344,7 +1353,7 @@ function renderEvents(f) {
           <div class="date-month">${MESES[mes]}</div>
         </div>
         <div class="card-info">
-          <div class="event-title" onclick="openModal(${i})" style="cursor:pointer;">${eventIcon} ${ev.title}${esHoy?'<span class="badge-hoy">Hoy</span>':''}</div>
+          <div class="event-title" onclick="openModal(${i})" style="cursor:pointer;">${ev.title}${esHoy?'<span class="badge-hoy">Hoy</span>':''}</div>
           <div class="meta-item"><span class="meta-icon">🕐</span>${DIAS[d.getDay()]} · ${hora}</div>
           ${ev.location?`<div class="meta-item"><span class="meta-icon">📍</span>${ev.location}</div>`:''}
         </div>
@@ -1752,69 +1761,6 @@ if ('serviceWorker' in navigator) {
       }
     });
   });
-}
-
-// ─── ICONOS POR TIPO DE EVENTO ──────────────────────────────────────────────
-function getEventIcon(text) {
-  const t = text.toLowerCase();
-  if (/teatro|obra|función|dramaturgi|escénic/.test(t)) return '🎭';
-  if (/cine|película|film|proyección/.test(t)) return '🎬';
-  if (/música|concierto|recital|coral|actuación|canción|jazz|rock|folk/.test(t)) return '🎵';
-  if (/lectura|libro|literatur|cuento|poesía|poema/.test(t)) return '📚';
-  if (/taller|workshop|curso|formación|aprende/.test(t)) return '🛠️';
-  if (/mercado|mercadillo|feria|venta/.test(t)) return '🛍️';
-  if (/deporte|yoga|danza|baile|gym|pilates|running/.test(t)) return '⚽';
-  if (/huerto|jardín|naturaleza|ecolog/.test(t)) return '🌱';
-  if (/asamblea|reunión|vecin|barrio|comunidad/.test(t)) return '🏘️';
-  if (/exposición|expo|arte|pintura|fotografía/.test(t)) return '🎨';
-  if (/infan|niñ|famili|juego/.test(t)) return '🧒';
-  if (/radio|podcast|emisora/.test(t)) return '📻';
-  if (/charla|conferencia|debate|mesa redonda|ponencia/.test(t)) return '🎤';
-  if (/fiesta|celebración|party|verbena/.test(t)) return '🎉';
-  if (/comida|gastronomía|cocina|cena/.test(t)) return '🍽️';
-  return '📌';
-}
-
-// ─── RSS ─────────────────────────────────────────────────────────────────────
-function generateRSS(events) {
-  const sorted = [...events].sort((a,b) => new Date(b.datetime) - new Date(a.datetime));
-  const items = sorted.map(ev => {
-    const d = new Date(ev.datetime);
-    const pubDate = d.toUTCString();
-    const desc = [
-      ev.location ? `📍 ${ev.location}` : '',
-      ev.description || ''
-    ].filter(Boolean).join(' · ');
-    return `    <item>
-      <title><![CDATA[${ev.title}]]></title>
-      <description><![CDATA[${desc}]]></description>
-      <pubDate>${pubDate}</pubDate>
-      <guid>${ev.id}</guid>
-      ${ev.image_url ? `<enclosure url="${ev.image_url}" type="image/jpeg" />` : ''}
-    </item>`;
-  }).join('
-');
-
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>Agenda Tetuán</title>
-    <link>https://olgaberrios.github.io/agendadetetuan/</link>
-    <description>actividades de ocio, cultura y reivindicativas en el distrito de tetuán, madrid</description>
-    <language>es</language>
-    <atom:link href="https://olgaberrios.github.io/agendadetetuan/feed.xml" rel="self" type="application/rss+xml" />
-${items}
-  </channel>
-</rss>`;
-}
-
-function downloadRSS() {
-  const xml = generateRSS(allEvents);
-  const blob = new Blob([xml], {type: 'application/rss+xml'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'agenda-tetuan.xml';
-  a.click();
 }
 
 // ─── LINKIFY ─────────────────────────────────────────────────────────────────
