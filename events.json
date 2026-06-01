@@ -92,6 +92,18 @@
     "created_at": "2026-05-31T08:03:52.143948+00:00"
   },
   {
+    "id": "0c63f9d156",
+    "title": "CURSO DE SHAPER3D",
+    "datetime": "2026-06-06T18:00:00",
+    "end_datetime": "2026-06-06T20:00:00",
+    "location": "MakeSpace Madrid",
+    "description": "Aprende a diseñar piezas, prototipos y objetos 3D de forma intuitiva usando Shaper3D en iPad. Un taller práctico para makers, diseñadores, curiosos y personas que quieran iniciarse en el modelado 3D sin complicaciones.\nDurante la sesión veremos cómo crear bocetos, trabajar con formas básicas, modificar modelos, preparar diseños para fabricación y entender el flujo de trabajo desde la idea hasta el prototipo.\nTrae tu iPad y tu lápiz digital\nRecomendado: iPad con Apple Pencil o lápiz compatible.\nJuly\nCalle Ruiz Palacios 7\n2026-06-06 18:00 - 20:00",
+    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/0c63f9d156.jpg",
+    "image_hash": "8aba27ae7edb96f8387759ff7b17ca52",
+    "source_id": "img_89_0",
+    "created_at": "2026-06-01T12:00:48.584281+00:00"
+  },
+  {
     "id": "945e39b892",
     "title": "Ciclo de cine Directores. Presentación y coloquio con Guillermo Balmori sobre Los valientes andan solos",
     "datetime": "2026-06-06T19:00:00",
