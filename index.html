@@ -1072,7 +1072,7 @@
 <!-- TAGLINE -->
 <div class="barrios-bar">
   <div style="max-width:1100px;margin:0 auto;padding:0 24px;text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.9);letter-spacing:1.5px;text-transform:uppercase;font-weight:500;">
-    Actividades de ocio, cultura y reivindicativas en el distrito de Tetuán, Madrid
+    actividades de ocio, cultura y reivindicativas en el distrito de tetuán, madrid
   </div>
 </div>
 
@@ -1291,7 +1291,7 @@ let editingId    = null;
 // ─── CARGAR EVENTOS ───────────────────────────────────────────────────────────
 async function loadEvents() {
   try {
-    const r = await fetch(EVENTS_JSON_URL + '?nocache=' + Date.now(), {cache: 'no-store'});
+    const r = await fetch(EVENTS_JSON_URL + '?v=' + Date.now(), {cache: 'no-store', headers: {'Pragma': 'no-cache', 'Cache-Control': 'no-cache'}});
     if (!r.ok) throw new Error();
     allEvents = await r.json();
     allEvents.sort((a,b) => new Date(a.datetime) - new Date(b.datetime));
@@ -1800,7 +1800,7 @@ function generateRSS(events) {
   <channel>
     <title>Agenda Tetuán</title>
     <link>https://olgaberrios.github.io/agendadetetuan/</link>
-    <description>Actividades de ocio, cultura y reivindicativas en el distrito de Tetuán, Madrid</description>
+    <description>actividades de ocio, cultura y reivindicativas en el distrito de tetuán, madrid</description>
     <language>es</language>
     <atom:link href="https://olgaberrios.github.io/agendadetetuan/feed.xml" rel="self" type="application/rss+xml" />
 ${items}

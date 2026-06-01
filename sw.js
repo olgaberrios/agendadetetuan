@@ -1,4 +1,4 @@
-const CACHE_NAME = 'agenda-tetuan-v3';
+const CACHE_NAME = 'agenda-tetuan-v4';
 const BASE = '/agendadetetuan/';
 const STATIC = [
   BASE,
