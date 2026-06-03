@@ -71,6 +71,18 @@
     "created_at": "2026-06-01T11:11:54.123800+00:00"
   },
   {
+    "id": "24764a3580",
+    "title": "Taller de Cómic",
+    "datetime": "2026-06-05T18:00:00",
+    "end_datetime": "2026-06-05T20:00:00",
+    "location": "\"13 Rue del Percebe\"",
+    "description": "CREAREMOS NUESTRO PROPIO IS RUE DEL PERCEBE... DEL SXXI PARA PEQUES, JÓVENES Y ADULTOS! IANÍMATE LEÑE!",
+    "image_url": "https://agendadetetuan.github.io/calendario/images/24764a3580.jpg",
+    "image_hash": "001ef2da359d13f832559e9099f530f5",
+    "source_id": "img_4934_0",
+    "created_at": "2026-06-03T12:29:56.849290+00:00"
+  },
+  {
     "id": "4e1a925a3b",
     "title": "Ensayo abierto del Concierto de Broadway",
     "datetime": "2026-06-05T18:30:00",
