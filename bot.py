@@ -95,48 +95,50 @@ Responde UNICAMENTE con el array JSON."""
 
 
 # ─── LLAMADA A OPENROUTER ─────────────────────────────────────────────────────
-# Modelos gratuitos con soporte de imágenes, en orden de preferencia
-FREE_VISION_MODELS = [
-    "qwen/qwen2.5-vl-72b-instruct:free",
-    "qwen/qwen2-vl-7b-instruct:free",
-    "meta-llama/llama-3.2-11b-vision-instruct:free",
-    "openrouter/free",
-]
+import time as _time
 
-FREE_TEXT_MODELS = [
-    "meta-llama/llama-3.3-70b-instruct:free",
-    "deepseek/deepseek-r1:free",
-    "mistralai/mistral-small-3.1-24b-instruct:free",
+# openrouter/auto elige el mejor modelo para cada petición automáticamente
+FREE_MODELS = [
+    "openrouter/auto",
     "openrouter/free",
 ]
 
 def call_openrouter(messages: list, vision: bool = False) -> str | None:
-    models = FREE_VISION_MODELS if vision else FREE_TEXT_MODELS
+    models = FREE_MODELS
     for model in models:
-        try:
-            log.info(f"  Probando modelo: {model}")
-            resp = http_requests.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                    "Content-Type": "application/json",
-                    "HTTP-Referer": "https://agendatetuan.github.io",
-                    "X-Title": "Agenda Tetuán Bot"
-                },
-                json={
-                    "model": model,
-                    "messages": messages,
-                    "max_tokens": 800
-                },
-                timeout=30
-            )
-            resp.raise_for_status()
-            result = resp.json()["choices"][0]["message"]["content"]
-            if result:
-                log.info(f"  Modelo OK: {model}")
-                return result.strip()
-        except Exception as e:
-            log.warning(f"  Modelo {model} falló: {e}, probando siguiente...")
+        for attempt in range(2):  # reintentar una vez si da 429
+            try:
+                log.info(f"  Probando modelo: {model}")
+                resp = http_requests.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+                        "Content-Type": "application/json",
+                        "HTTP-Referer": "https://agendatetuan.github.io",
+                        "X-Title": "Agenda Tetuan Bot"
+                    },
+                    json={
+                        "model": model,
+                        "messages": messages,
+                        "max_tokens": 1000
+                    },
+                    timeout=45
+                )
+                if resp.status_code == 429:
+                    wait = int(resp.headers.get("Retry-After", 10))
+                    log.warning(f"  429 en {model}, esperando {wait}s...")
+                    _time.sleep(wait)
+                    continue
+                resp.raise_for_status()
+                result = resp.json()["choices"][0]["message"]["content"]
+                if result:
+                    log.info(f"  Modelo OK: {model}")
+                    return result.strip()
+                break
+            except Exception as e:
+                log.warning(f"  Modelo {model} intento {attempt+1} falló: {e}")
+                if attempt == 0:
+                    _time.sleep(3)
     log.error("Todos los modelos fallaron")
     return None
 
@@ -215,7 +217,7 @@ def upload_image_to_github(image_bytes: bytes, filename: str) -> str | None:
             repo.update_file(path, "Actualizar imagen", image_bytes, existing.sha)
         except GithubException:
             repo.create_file(path, "Subir imagen de evento", image_bytes)
-        raw_url = f"https://{GITHUB_REPO.split('/')[0]}.github.io/{GITHUB_REPO.split('/')[1]}/{path}"
+        raw_url = f"https://agendadetetuan.github.io/calendario/{path}"
         log.info(f"  Imagen subida: {raw_url}")
         return raw_url
     except Exception as e:
@@ -332,6 +334,13 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     events = extract_from_text(msg.text)
     if not events:
         log.info("   → No es un evento, ignorando")
+        if REVIEW_CHAT_ID:
+            preview = msg.text[:80] + ("..." if len(msg.text) > 80 else "")
+            await context.bot.send_message(
+                chat_id=REVIEW_CHAT_ID,
+                text=f"ℹ️ *Texto ignorado* (no detecté un evento)\n\n_{preview}_",
+                parse_mode="Markdown"
+            )
         return
     for i, event_data in enumerate(events):
         log.info(f"   → Evento {i+1}/{len(events)}: {event_data.get('title')}")
@@ -351,6 +360,13 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     events = extract_from_image(image_bytes, msg.caption or "")
     if not events:
         log.info("   → Sin evento reconocible, ignorando")
+        if REVIEW_CHAT_ID:
+            caption_info = f"\nPie de foto: _{msg.caption}_" if msg.caption else ""
+            await context.bot.send_message(
+                chat_id=REVIEW_CHAT_ID,
+                text=f"ℹ️ *Cartel ignorado* (no detecté fecha/hora o lugar){caption_info}\n\nPuedes añadirlo manualmente desde el panel admin.",
+                parse_mode="Markdown"
+            )
         return
     for i, event_data in enumerate(events):
         log.info(f"   → Evento {i+1}/{len(events)} en imagen: {event_data.get('title')}")
