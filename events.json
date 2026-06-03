@@ -163,5 +163,17 @@
     "image_hash": "3d2410bef5120b6cce4952251fbf29b0",
     "source_id": "img_4918",
     "created_at": "2026-05-31T10:38:14.167958+00:00"
+  },
+  {
+    "id": "b6bdf8bc9f",
+    "title": "Club de lectura: Comentaremos el libro \"Las cosas que perdimos en el fuego\"",
+    "datetime": "2026-06-23T19:00:00",
+    "end_datetime": null,
+    "location": "Ateneo de Tetuán",
+    "description": "Martes, 23 de junio, 19h. C.Torrijos, 15. Metro Valdeacederas.",
+    "image_url": "https://agendadetetuan.github.io/calendario/images/b6bdf8bc9f.jpg",
+    "image_hash": "6b7b8caedf9dd6ba03aa3a3e542e28f1",
+    "source_id": "img_4930_0",
+    "created_at": "2026-06-03T10:25:44.894088+00:00"
   }
 ]
