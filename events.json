@@ -201,18 +201,6 @@
     "created_at": "2026-06-03T12:30:33.338811+00:00"
   },
   {
-    "id": "f0ccdd1b01",
-    "title": "EL MARAVILLOSO MUNDO DEL LAS ABEJAS",
-    "datetime": "2026-06-13T11:00:00",
-    "end_datetime": null,
-    "location": "Huerto de La Ventilla",
-    "description": "El maravilloso mundo de las abejas, sábado 13 de junio a las 11:00 h en el Huerto de La Ventilla, organizado por la Asociación Vecinal y Huerto Urbano Ventilla-Almenara.",
-    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/f0ccdd1b01.jpg",
-    "image_hash": "3d2410bef5120b6cce4952251fbf29b0",
-    "source_id": "img_4918",
-    "created_at": "2026-05-31T10:38:14.167958+00:00"
-  },
-  {
     "id": "942626ba89",
     "title": "Taller de STOP-MOTION con figuras de acción",
     "datetime": "2026-06-13T11:00:00",
