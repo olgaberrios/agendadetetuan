@@ -82,6 +82,18 @@
     "created_at": "2026-05-31T08:03:52.143948+00:00"
   },
   {
+    "id": "ed32e2c44c",
+    "title": "BARRIOS QUE FUERON PUEBLOS",
+    "datetime": "2026-06-06T10:00:00",
+    "end_datetime": null,
+    "location": "CIEA Dehesa de la Villa",
+    "description": "EN BICICLETA A EL PARDO RUTA LÍNEA 12 km aproximadamente",
+    "image_url": "https://agendadetetuan.github.io/calendario/images/ed32e2c44c.jpg",
+    "image_hash": "476ab85176de49b37fe7a513b3589261",
+    "source_id": "img_4938_0",
+    "created_at": "2026-06-04T13:26:45.335372+00:00"
+  },
+  {
     "id": "0c63f9d156",
     "title": "CURSO DE SHAPER3D",
     "datetime": "2026-06-06T18:00:00",
