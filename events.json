@@ -12,30 +12,6 @@
     "created_at": "2026-06-03T12:29:08.129475+00:00"
   },
   {
-    "id": "9060620907",
-    "title": "Huerto Urbano de La Ventilla",
-    "datetime": "2026-06-03T18:00:00",
-    "end_datetime": "2026-06-03T19:00:00",
-    "location": "Entrada Calle Emilia esq. Calle Cañaveral",
-    "description": "Horarios de Primavera. Entrada Calle Emilia esq. Calle Cañaveral. Metro: Ventilla y Plaza de Castilla. Bus: 42 y 177. ¡Animate a participar!",
-    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/9060620907.jpg",
-    "image_hash": "a55609effe54f0be553d5fb8ef6541fe",
-    "source_id": "img_77",
-    "created_at": "2026-05-31T10:44:11.341460+00:00"
-  },
-  {
-    "id": "9af262b484",
-    "title": "Asamblea abierta para la preparación de las fiestas del barrio",
-    "datetime": "2026-06-03T19:30:00",
-    "end_datetime": null,
-    "location": "Huerta de Tetuán, Calle del Matadero, 14",
-    "description": "Fiestas vecinales del barrio de Tetuán organizadas por la Asamblea de la juventud trabajadora Tetuan. Incluye actividades culturales y de convivencia social. El objetivo es devolver las fiestas del barrio a la comunidad local.",
-    "image_url": "https://olgaberrios.github.io/agendadetetuan/images/9af262b484.jpg",
-    "image_hash": "386cf04ad79174d6c2e8581dbff62d91",
-    "source_id": "img_59",
-    "created_at": "2026-05-31T08:11:44.134617+00:00"
-  },
-  {
     "id": "22e7d2a467",
     "title": "Movilización por colegios más frescos en Tetuán",
     "datetime": "2026-06-04T17:00:00",
