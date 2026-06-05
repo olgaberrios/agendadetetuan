@@ -1,5 +1,17 @@
 [
   {
+    "id": "2ab4a78a93",
+    "title": "Asistencia en remedios",
+    "datetime": "2026-05-31T14:30:00",
+    "end_datetime": null,
+    "location": "Clínica Comunal de Salud",
+    "description": "Clara busca apoyo en la búsqueda de profesionales locales para consejos de remedios tradicionales.",
+    "image_url": null,
+    "image_hash": null,
+    "source_id": "4940_0",
+    "created_at": "2026-06-05T19:48:11.645063+00:00"
+  },
+  {
     "id": "7d6c5fe72a",
     "title": "AGENDA JUNIO 2026",
     "datetime": "2026-06-01T00:00:00",
