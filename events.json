@@ -236,5 +236,17 @@
     "image_hash": "6b7b8caedf9dd6ba03aa3a3e542e28f1",
     "source_id": "img_4930_0",
     "created_at": "2026-06-03T10:25:44.894088+00:00"
+  },
+  {
+    "id": "94936faa0f",
+    "title": "Ciclo de cine 'Directores. Richard Thorpe'",
+    "datetime": "2026-06-28T19:00:00",
+    "end_datetime": null,
+    "location": "Centro Cultural Eduardo Úrculo (Tetuán), PLAZA DONOSO, 5 MADRID",
+    "description": "Presentación y coloquio final a cargo de Guillermo Balmori. El prisionero de Zenda. Duración: 101 minutos. Edad recomendada: mayores de 12 años. Gratuito.",
+    "image_url": "https://agendadetetuan.github.io/calendario/images/94936faa0f.jpg",
+    "image_hash": "ed38b3f794fb89f41e6abf5bdc19bab2",
+    "source_id": "img_4939_0",
+    "created_at": "2026-06-05T14:29:02.746791+00:00"
   }
 ]
