@@ -357,25 +357,31 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     buf     = BytesIO()
     await tg_file.download_to_memory(buf)
     image_bytes = buf.getvalue()
-    events = extract_from_image(image_bytes, msg.caption or "")
+    caption = msg.caption or ""
+
+    # Intentar primero con la imagen
+    events = extract_from_image(image_bytes, caption)
+
+    # Si falla pero hay un pie de foto rico, intentar solo con el texto
+    if not events and len(caption) > 30:
+        log.info("   → Imagen no procesada, intentando con el texto del pie de foto...")
+        events = extract_from_text(caption)
+        if events:
+            log.info("   → Evento extraído del pie de foto")
+
     if not events:
         log.info("   → Sin evento reconocible, ignorando")
         if REVIEW_CHAT_ID:
-            caption_info = f"\nPie de foto: _{msg.caption}_" if msg.caption else ""
+            caption_info = f"\nPie de foto: _{caption}_" if caption else ""
             await context.bot.send_message(
                 chat_id=REVIEW_CHAT_ID,
                 text=f"ℹ️ *Cartel ignorado* (no detecté fecha/hora o lugar){caption_info}\n\nPuedes añadirlo manualmente desde el panel admin.",
                 parse_mode="Markdown"
             )
         return
-    for i, event_data in enumerate(events):
-        log.info(f"   → Evento {i+1}/{len(events)} en imagen: {event_data.get('title')}")
-        # Solo el primero lleva la imagen; los siguientes (horarios recurrentes) no
-        img = image_bytes if i == 0 else None
-        ok = add_event(event_data, source_id=f"img_{msg.message_id}_{i}", image_bytes=img)
-        await notify_admin(context, event_data, ok)
 
-# ─── API KEY PARA EL PANEL ADMIN ─────────────────────────────────────────────
+
+# ─── API KEY ──────────────────────────────────────────────────────────────────
 ADMIN_API_KEY = os.environ.get("ADMIN_API_KEY", "165db66c54673e7b364301cf0f986a5761c9149d5da589139eb525bda7e89e19")
 
 # ─── SERVIDOR WEB CON API ─────────────────────────────────────────────────────
@@ -387,24 +393,17 @@ class APIHandler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Admin-Key")
 
     def do_OPTIONS(self):
-        self.send_response(200)
-        self._cors()
-        self.end_headers()
+        self.send_response(200); self._cors(); self.end_headers()
 
     def do_GET(self):
-        self.send_response(200)
-        self._cors()
-        self.end_headers()
+        self.send_response(200); self._cors(); self.end_headers()
         self.wfile.write(b"Bot Agenda Tetuan OK")
 
     def do_POST(self):
         key = self.headers.get("X-Admin-Key", "")
         if key != ADMIN_API_KEY:
-            self.send_response(401)
-            self._cors()
-            self.end_headers()
-            self.wfile.write(b'{"error":"Unauthorized"}')
-            return
+            self.send_response(401); self._cors(); self.end_headers()
+            self.wfile.write(b'{"error":"Unauthorized"}'); return
 
         length = int(self.headers.get("Content-Length", 0))
         body   = json.loads(self.rfile.read(length)) if length else {}
@@ -416,28 +415,31 @@ class APIHandler(BaseHTTPRequestHandler):
                 events, sha = load_events()
                 events = [e for e in events if e.get("id") != event_id]
                 ok = save_events(events, sha)
-                log.info(f"Admin borró evento {event_id}: {ok}")
+                log.info(f"Admin borró evento {event_id}")
                 resp = json.dumps({"ok": ok}).encode()
             elif action == "save":
                 events = body.get("events", [])
                 _, sha = load_events()
                 ok = save_events(events, sha)
-                log.info(f"Admin guardó {len(events)} eventos: {ok}")
+                log.info(f"Admin guardó {len(events)} eventos")
                 resp = json.dumps({"ok": ok}).encode()
+            elif action == "upload-image":
+                img_b64  = body.get("image_b64", "")
+                filename = body.get("filename", "manual.jpg")
+                img_bytes = base64.standard_b64decode(img_b64)
+                url = upload_image_to_github(img_bytes, filename)
+                log.info(f"Admin subió imagen: {filename}")
+                resp = json.dumps({"ok": bool(url), "url": url}).encode()
             else:
                 resp = json.dumps({"error": "unknown action"}).encode()
 
-            self.send_response(200)
-            self._cors()
+            self.send_response(200); self._cors()
             self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(resp)
+            self.end_headers(); self.wfile.write(resp)
 
         except Exception as e:
             log.error(f"API error: {e}")
-            self.send_response(500)
-            self._cors()
-            self.end_headers()
+            self.send_response(500); self._cors(); self.end_headers()
             self.wfile.write(json.dumps({"error": str(e)}).encode())
 
     def log_message(self, format, *args):
@@ -449,8 +451,6 @@ def start_web_server():
     log.info(f"Servidor web + API en puerto {port}")
     server.serve_forever()
 
-
-# ─── ARRANQUE ─────────────────────────────────────────────────────────────────
 async def daily_cleanup(context):
     log.info("⏰ Limpieza diaria de imágenes...")
     cleanup_past_events()

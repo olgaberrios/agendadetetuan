@@ -288,6 +288,10 @@
         </div>
         <div class="form-group"><label>Lugar</label><input type="text" id="f-location" placeholder="Ej: Centro Cultural Tetuán" /></div>
         <div class="form-group"><label>Descripción</label><textarea id="f-desc" placeholder="Información adicional…"></textarea></div>
+        <div class="form-group">
+          <label>Cartel (imagen opcional)</label>
+          <input type="file" id="f-image" accept="image/*" style="padding:6px;" />
+        </div>
         <div class="form-actions"><button class="btn-primary" id="btn-save-event">Guardar evento</button></div>
       </div>
       <div class="admin-tab-content" id="tab-lista">
@@ -312,6 +316,11 @@
     </div>
     <div class="form-group"><label>Lugar</label><input type="text" id="e-location" /></div>
     <div class="form-group"><label>Descripción</label><textarea id="e-desc"></textarea></div>
+    <div class="form-group">
+      <label>Cartel (imagen opcional)</label>
+      <input type="file" id="e-image" accept="image/*" style="padding:6px;" />
+      <div id="e-current-img" style="margin-top:6px;"></div>
+    </div>
     <div class="form-actions">
       <button class="btn-danger" id="btn-delete-event">Borrar evento</button>
       <button class="btn-primary" id="btn-update-event">Guardar cambios</button>
@@ -543,12 +552,34 @@ document.querySelectorAll('.admin-tab').forEach(tab=>tab.addEventListener('click
 document.getElementById('btn-save-event').onclick=async()=>{
   const title=document.getElementById('f-title').value.trim(),dt=document.getElementById('f-datetime').value;
   if(!title||!dt){showMsg('form-msg','Rellena al menos el título y la fecha','error');return;}
-  const newEv={id:'manual-'+Date.now(),title,datetime:new Date(dt).toISOString(),end_datetime:document.getElementById('f-end').value?new Date(document.getElementById('f-end').value).toISOString():null,location:document.getElementById('f-location').value.trim()||null,description:document.getElementById('f-desc').value.trim(),source_id:'manual',created_at:new Date().toISOString()};
+  const eventId='manual-'+Date.now();
+  let image_url=null;
+  const imgFile=document.getElementById('f-image').files[0];
+  if(imgFile){
+    showMsg('form-msg','Subiendo imagen…');
+    image_url=await uploadImageViaBot(imgFile,eventId);
+  }
+  const newEv={id:eventId,title,datetime:new Date(dt).toISOString(),end_datetime:document.getElementById('f-end').value?new Date(document.getElementById('f-end').value).toISOString():null,location:document.getElementById('f-location').value.trim()||null,description:document.getElementById('f-desc').value.trim(),image_url,source_id:'manual',created_at:new Date().toISOString()};
   allEvents.push(newEv);allEvents.sort((a,b)=>new Date(a.datetime)-new Date(b.datetime));
   await saveEvents();renderEvents(currentFilter);
   ['f-title','f-location','f-desc','f-datetime','f-end'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-image').value='';
   showMsg('form-msg','✅ Evento guardado correctamente');
 };
+
+async function uploadImageViaBot(file, eventId){
+  try{
+    const reader=new FileReader();
+    const b64=await new Promise((res,rej)=>{reader.onload=()=>res(reader.result.split(',')[1]);reader.onerror=rej;reader.readAsDataURL(file);});
+    const r=await fetch(BOT_API_URL+'/upload-image',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_API_KEY},
+      body:JSON.stringify({image_b64:b64,filename:eventId+'.jpg'})
+    });
+    const data=await r.json();
+    return data.url||null;
+  }catch(e){console.error('Image upload error',e);return null;}
+}
 
 function renderAdminList(){
   const c=document.getElementById('admin-event-list');
@@ -559,7 +590,7 @@ function renderAdminList(){
   }).join('');
 }
 
-function openEdit(id){const ev=allEvents.find(e=>e.id===id);if(!ev)return;editingId=id;document.getElementById('e-title').value=ev.title||'';document.getElementById('e-datetime').value=toLocal(ev.datetime);document.getElementById('e-end').value=toLocal(ev.end_datetime);document.getElementById('e-location').value=ev.location||'';document.getElementById('e-desc').value=ev.description||'';document.getElementById('edit-msg').style.display='none';document.getElementById('edit-overlay').classList.add('open');}
+function openEdit(id){const ev=allEvents.find(e=>e.id===id);if(!ev)return;editingId=id;document.getElementById('e-title').value=ev.title||'';document.getElementById('e-datetime').value=toLocal(ev.datetime);document.getElementById('e-end').value=toLocal(ev.end_datetime);document.getElementById('e-location').value=ev.location||'';document.getElementById('e-desc').value=ev.description||'';document.getElementById('e-image').value='';const curImg=document.getElementById('e-current-img');curImg.innerHTML=ev.image_url?`<img src="${ev.image_url}" style="max-height:80px;border-radius:6px;margin-top:4px;" /> <small style="color:var(--gris-texto)">Imagen actual</small>`:'';document.getElementById('edit-msg').style.display='none';document.getElementById('edit-overlay').classList.add('open');}
 document.getElementById('edit-close').onclick=()=>document.getElementById('edit-overlay').classList.remove('open');
 document.getElementById('btn-update-event').onclick=async()=>{
   const idx=allEvents.findIndex(e=>e.id===editingId);if(idx<0)return;
