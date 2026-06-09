@@ -12,18 +12,6 @@
     "created_at": "2026-06-03T12:29:08.129475+00:00"
   },
   {
-    "id": "e97004fe77",
-    "title": "El Bus del Empleo",
-    "datetime": "2026-06-08T09:00:00",
-    "end_datetime": "2026-06-08T14:00:00",
-    "location": "Av/Asturias37",
-    "description": "El Bus del Empleo llega lunes9junio y martes10junio a Tetuán de 9am-14h Av/Asturias37 https://www.madrid.es/portales/munimadrid/es/Inicio/Educacion-y-empleo/Empleo/Agencia-para-el-Empleo-de-Madrid/?vgnextoid=c65815fa10294110VgnVCM1000000b205a0aRCRD&vgnextchannel=3f50c5dee78fe410VgnVCM1000000b205a0aRCRD&idCapitulo=12250187",
-    "image_url": "https://agendadetetuan.github.io/calendario/images/e97004fe77.jpg",
-    "image_hash": "cf841e4da204657da2164a4e94c1c2a0",
-    "source_id": "img_4953_0",
-    "created_at": "2026-06-08T14:08:17.824918+00:00"
-  },
-  {
     "id": "46fe112fbc",
     "title": "El Bus del Empleo",
     "datetime": "2026-06-09T09:00:00",
