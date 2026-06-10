@@ -571,14 +571,31 @@ async function uploadImageViaBot(file, eventId){
   try{
     const reader=new FileReader();
     const b64=await new Promise((res,rej)=>{reader.onload=()=>res(reader.result.split(',')[1]);reader.onerror=rej;reader.readAsDataURL(file);});
+    showMsg('form-msg','Subiendo imagen al servidor…');
     const r=await fetch(BOT_API_URL+'/upload-image',{
       method:'POST',
       headers:{'Content-Type':'application/json','X-Admin-Key':ADMIN_API_KEY},
       body:JSON.stringify({image_b64:b64,filename:eventId+'.jpg'})
     });
+    if(!r.ok){
+      const err=await r.text();
+      console.error('Upload error HTTP',r.status,err);
+      showMsg('form-msg','Error al subir imagen ('+r.status+'). El evento se guardará sin imagen.','error');
+      return null;
+    }
     const data=await r.json();
-    return data.url||null;
-  }catch(e){console.error('Image upload error',e);return null;}
+    if(!data.ok||!data.url){
+      showMsg('form-msg','No se pudo subir la imagen. El evento se guardará sin imagen.','error');
+      return null;
+    }
+    // Esperar 3s para que GitHub Pages sirva la imagen
+    await new Promise(r=>setTimeout(r,3000));
+    return data.url;
+  }catch(e){
+    console.error('Image upload error',e);
+    showMsg('form-msg','Error de red al subir imagen: '+e.message,'error');
+    return null;
+  }
 }
 
 function renderAdminList(){

@@ -103,10 +103,12 @@ FREE_MODELS = [
     "openrouter/free",
 ]
 
-def call_openrouter(messages: list, vision: bool = False) -> str | None:
+def call_openrouter(messages: list, vision: bool = False) -> tuple[str | None, str | None]:
+    """Devuelve (resultado, motivo_error). motivo_error es None si todo fue bien."""
     models = FREE_MODELS
+    last_error = None
     for model in models:
-        for attempt in range(2):  # reintentar una vez si da 429
+        for attempt in range(2):
             try:
                 log.info(f"  Probando modelo: {model}")
                 resp = http_requests.post(
@@ -117,30 +119,29 @@ def call_openrouter(messages: list, vision: bool = False) -> str | None:
                         "HTTP-Referer": "https://agendatetuan.github.io",
                         "X-Title": "Agenda Tetuan Bot"
                     },
-                    json={
-                        "model": model,
-                        "messages": messages,
-                        "max_tokens": 1000
-                    },
+                    json={"model": model, "messages": messages, "max_tokens": 1000},
                     timeout=45
                 )
                 if resp.status_code == 429:
                     wait = int(resp.headers.get("Retry-After", 10))
                     log.warning(f"  429 en {model}, esperando {wait}s...")
+                    last_error = "limite_openrouter"
                     _time.sleep(wait)
                     continue
                 resp.raise_for_status()
                 result = resp.json()["choices"][0]["message"]["content"]
                 if result:
                     log.info(f"  Modelo OK: {model}")
-                    return result.strip()
+                    return result.strip(), None
                 break
             except Exception as e:
                 log.warning(f"  Modelo {model} intento {attempt+1} falló: {e}")
-                if attempt == 0:
-                    _time.sleep(3)
+                if "429" in str(e): last_error = "limite_openrouter"
+                elif "401" in str(e): last_error = "clave_invalida"
+                else: last_error = "error_modelo"
+                if attempt == 0: _time.sleep(3)
     log.error("Todos los modelos fallaron")
-    return None
+    return None, last_error or "error_desconocido"
 
 # ─── EXTRAER EVENTO ───────────────────────────────────────────────────────────
 def extract_events(raw: str) -> list[dict]:
@@ -150,25 +151,78 @@ def extract_events(raw: str) -> list[dict]:
     try:
         clean = raw.replace("```json", "").replace("```", "").strip()
         data  = json.loads(clean)
-        # Puede ser array o dict único
         items = data if isinstance(data, list) else [data]
         return [e for e in items if isinstance(e, dict) and e.get("es_evento")]
     except Exception as e:
         log.error(f"Error parseando JSON: {e} | raw: {raw[:200]}")
         return []
 
-def extract_from_text(text: str) -> list[dict]:
+def extract_event_fallback(text: str) -> list[dict]:
+    """Extractor sin IA usando regex. Último recurso cuando OpenRouter falla."""
+    import re
+
+    MESES_ES = {"enero":1,"febrero":2,"marzo":3,"abril":4,"mayo":5,"junio":6,
+                "julio":7,"agosto":8,"septiembre":9,"octubre":10,"noviembre":11,"diciembre":12}
+
+    fecha = hora = location = None
+
+    # Fecha: "12 de junio", "jueves 12 de junio"
+    m = re.search(r"(\d{1,2})\s+de\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)", text, re.IGNORECASE)
+    if not m:
+        m = re.search(r"(\d{1,2})\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)", text, re.IGNORECASE)
+    if m:
+        dia = int(m.group(1))
+        mes = MESES_ES[m.group(2).lower()]
+        fecha = f"{datetime.now().year}-{mes:02d}-{dia:02d}"
+
+    # Hora: "19:30", "19h30", "a las 19"
+    m = re.search(r"(?:a las\s+)?(\d{1,2})[:h\.](\d{2})?(?:\s*h(?:oras?)?)?", text, re.IGNORECASE)
+    if m:
+        h = int(m.group(1))
+        mi = int(m.group(2)) if m.group(2) else 0
+        if 6 <= h <= 23:
+            hora = f"{h:02d}:{mi:02d}:00"
+
+    if not fecha:
+        return []
+
+    dt = f"{fecha}T{hora if hora else '00:00:00'}"
+
+    # Título: primera línea no vacía
+    lines = [l.strip() for l in text.split("\n") if l.strip()]
+    title = lines[0] if lines else "Evento sin título"
+
+    # Lugar: "Calle X", "Espacio X", "en X"
+    m = re.search(r"[Cc]alle\s+[\w\s]+(?:,\s*\d+)?", text)
+    if m:
+        location = m.group(0).strip()
+    if not location:
+        m = re.search(r"(?:espacio|centro|biblioteca|sala|teatro|plaza)\s+[\w\s]+", text, re.IGNORECASE)
+        if m:
+            location = m.group(0).strip()
+
+    log.info(f"  Fallback regex: título={title}, fecha={dt}, lugar={location}")
+    return [{"es_evento": True, "title": title, "datetime": dt, "end_datetime": None,
+             "location": location, "description": text}]
+
+def extract_from_text(text: str) -> tuple[list[dict], str | None]:
     try:
-        raw = call_openrouter([
+        raw, error = call_openrouter([
             {"role": "system", "content": PROMPT},
             {"role": "user", "content": text}
         ])
-        return extract_events(raw)
+        events = extract_events(raw) if raw else []
+        if not events and error:
+            log.info(f"  IA falló ({error}), intentando extractor regex...")
+            events = extract_event_fallback(text)
+            if events:
+                log.info("  Fallback regex tuvo éxito")
+        return events, error
     except Exception as e:
         log.error(f"Error extrayendo texto: {e}")
-        return []
+        return [], "error_desconocido"
 
-def extract_from_image(image_bytes: bytes, caption: str = "") -> list[dict]:
+def extract_from_image(image_bytes: bytes, caption: str = "") -> tuple[list[dict], str | None]:
     try:
         b64  = base64.standard_b64encode(image_bytes).decode("utf-8")
         text = PROMPT
@@ -176,17 +230,18 @@ def extract_from_image(image_bytes: bytes, caption: str = "") -> list[dict]:
             text += f"\n\nTexto que acompaña la imagen: {caption}"
         text += "\n\nAnaliza el cartel y extrae el/los evento/s."
 
-        raw = call_openrouter([
+        raw, error = call_openrouter([
             {"role": "system", "content": PROMPT},
             {"role": "user", "content": [
                 {"type": "text", "text": text},
                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{b64}"}}
             ]}
         ])
-        return extract_events(raw)
+        events = extract_events(raw) if raw else []
+        return events, error
     except Exception as e:
         log.error(f"Error extrayendo imagen: {e}")
-        return []
+        return [], "error_desconocido"
 
 # ─── GITHUB: LEER Y ESCRIBIR events.json ─────────────────────────────────────
 def load_events() -> tuple[list, str]:
@@ -326,19 +381,42 @@ async def notify_admin(context, event_data: dict, ok: bool):
     await context.bot.send_message(chat_id=REVIEW_CHAT_ID, text=text, parse_mode="Markdown")
 
 # ─── HANDLERS ─────────────────────────────────────────────────────────────────
+ERROR_MSGS = {
+    "limite_openrouter": "⚠️ Límite de peticiones a OpenRouter agotado. Inténtalo en unos minutos.",
+    "clave_invalida": "⚠️ Clave de OpenRouter inválida. Revisa la configuración.",
+    "error_modelo": "⚠️ El modelo de IA no respondió correctamente.",
+    "error_desconocido": "⚠️ Error desconocido al procesar."
+}
+
+def build_ignore_reason(event_data: dict | None, error: str | None) -> str:
+    """Construye un mensaje de error descriptivo."""
+    if error and error == "limite_openrouter":
+        return "⚠️ *Peticiones a OpenRouter agotadas*. Inténtalo en unos minutos."
+    if error and error != "error_desconocido":
+        return ERROR_MSGS.get(error, f"⚠️ Error: {error}")
+    if event_data:
+        missing = []
+        if not event_data.get("title"): missing.append("título")
+        if not event_data.get("datetime"): missing.append("fecha/hora")
+        if not event_data.get("location"): missing.append("lugar")
+        if missing:
+            return f"ℹ️ Faltan datos: *{', '.join(missing)}*"
+    return "ℹ️ No detecté un evento concreto"
+
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     msg = update.channel_post or update.message
     if not msg or not msg.text:
         return
     log.info(f"📨 Texto recibido (id={msg.message_id})")
-    events = extract_from_text(msg.text)
+    events, error = extract_from_text(msg.text)
     if not events:
-        log.info("   → No es un evento, ignorando")
+        reason = build_ignore_reason(None, error)
+        log.info(f"   → Ignorado: {reason}")
         if REVIEW_CHAT_ID:
             preview = msg.text[:80] + ("..." if len(msg.text) > 80 else "")
             await context.bot.send_message(
                 chat_id=REVIEW_CHAT_ID,
-                text=f"ℹ️ *Texto ignorado* (no detecté un evento)\n\n_{preview}_",
+                text=f"{reason}\n\n_{preview}_\n\nPuedes añadirlo manualmente desde el panel admin.",
                 parse_mode="Markdown"
             )
         return
@@ -360,22 +438,23 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     caption = msg.caption or ""
 
     # Intentar primero con la imagen
-    events = extract_from_image(image_bytes, caption)
+    events, error = extract_from_image(image_bytes, caption)
 
-    # Si falla pero hay un pie de foto rico, intentar solo con el texto
+    # Si falla pero hay un pie de foto rico, intentar con el texto del pie
     if not events and len(caption) > 30:
         log.info("   → Imagen no procesada, intentando con el texto del pie de foto...")
-        events = extract_from_text(caption)
+        events, error = extract_from_text(caption)
         if events:
             log.info("   → Evento extraído del pie de foto")
 
     if not events:
-        log.info("   → Sin evento reconocible, ignorando")
+        reason = build_ignore_reason(None, error)
+        log.info(f"   → Ignorado: {reason}")
         if REVIEW_CHAT_ID:
             caption_info = f"\nPie de foto: _{caption}_" if caption else ""
             await context.bot.send_message(
                 chat_id=REVIEW_CHAT_ID,
-                text=f"ℹ️ *Cartel ignorado* (no detecté fecha/hora o lugar){caption_info}\n\nPuedes añadirlo manualmente desde el panel admin.",
+                text=f"{reason}{caption_info}\n\nPuedes añadirlo manualmente desde el panel admin.",
                 parse_mode="Markdown"
             )
         return
