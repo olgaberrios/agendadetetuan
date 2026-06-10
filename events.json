@@ -12,42 +12,6 @@
     "created_at": "2026-06-03T12:29:08.129475+00:00"
   },
   {
-    "id": "46fe112fbc",
-    "title": "El Bus del Empleo",
-    "datetime": "2026-06-09T09:00:00",
-    "end_datetime": "2026-06-09T14:00:00",
-    "location": "Av/Asturias37",
-    "description": "El Bus del Empleo llega lunes9junio y martes10junio a Tetuán de 9am-14h Av/Asturias37 https://www.madrid.es/portales/munimadrid/es/Inicio/Educacion-y-empleo/Empleo/Agencia-para-el-Empleo-de-Madrid/?vgnextoid=c65815fa10294110VgnVCM1000000b205a0aRCRD&vgnextchannel=3f50c5dee78fe410VgnVCM1000000b205a0aRCRD&idCapitulo=12250187",
-    "image_url": null,
-    "image_hash": null,
-    "source_id": "img_4953_1",
-    "created_at": "2026-06-08T14:08:20.165837+00:00"
-  },
-  {
-    "id": "c94c41593b",
-    "title": "Presentación de \"Espejos\"",
-    "datetime": "2026-06-09T19:00:00",
-    "end_datetime": null,
-    "location": "Espacio Púrpura de la Biblioteca (1.ª planta), Biblioteca Pública Municipal Manuel Vázquez Montalbán, Calle de Francos Rodríguez, 67, Madrid",
-    "description": "El autor Óscar Vázquez Mínguez presentará su poemario \"Espejos\", que versa sobre la edad, el paso del tiempo, las ausencias y lo permanente, según las palabras del propio escritor. Nos acompañarán en el evento la escritora Carolina Illescas, el dramaturgo César López Llera, y el editor Alejandro Santiago. Entrada: ¡Libre hasta completar aforo!",
-    "image_url": "https://agendadetetuan.github.io/calendario/images/c94c41593b.jpg",
-    "image_hash": "a56c946f0392dda9cc7977b9a5f7a89e",
-    "source_id": "img_101_0",
-    "created_at": "2026-06-03T07:40:11.375355+00:00"
-  },
-  {
-    "id": "ee2614f74b",
-    "title": "Vida de Miguel Hernández",
-    "datetime": "2026-06-09T19:00:00",
-    "end_datetime": null,
-    "location": "C/Geranios 22, Asociacíon Vecinal Ventilla Almenara",
-    "description": "Con la participación del autor: Mario Amorós. Lectura de fragmentos de 'Un poeta en la Historia'.",
-    "image_url": "https://agendadetetuan.github.io/calendario/images/ee2614f74b.jpg",
-    "image_hash": "3ada8ef32b8d3a94a30d190fec6326b1",
-    "source_id": "img_122_0",
-    "created_at": "2026-06-04T05:12:56.439136+00:00"
-  },
-  {
     "id": "6bf43bdf3f",
     "title": "EXPO CON MOGOLLÓN DE MATERIAL",
     "datetime": "2026-06-10T00:00:00",
