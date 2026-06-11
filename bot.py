@@ -97,9 +97,8 @@ Responde UNICAMENTE con el array JSON."""
 # ─── LLAMADA A OPENROUTER ─────────────────────────────────────────────────────
 import time as _time
 
-# openrouter/auto elige el mejor modelo para cada petición automáticamente
+# openrouter/free es el único modelo verdaderamente gratuito
 FREE_MODELS = [
-    "openrouter/auto",
     "openrouter/free",
 ]
 
@@ -148,8 +147,18 @@ def extract_events(raw: str) -> list[dict]:
     """Parsea la respuesta JSON del modelo y devuelve lista de eventos válidos."""
     if not raw:
         return []
+    # Detectar respuestas de seguridad del modelo (no son JSON)
+    non_json_signals = ["user safety", "safe", "i cannot", "no puedo", "lo siento", "sorry"]
+    if len(raw) < 100 and any(s in raw.lower() for s in non_json_signals):
+        log.warning(f"  Modelo rechazó la imagen por seguridad: {raw[:80]}")
+        return []
     try:
         clean = raw.replace("```json", "").replace("```", "").strip()
+        # A veces el modelo añade texto antes del JSON
+        if not clean.startswith(("[", "{")):
+            idx = clean.find("[")
+            if idx == -1: idx = clean.find("{")
+            if idx > 0: clean = clean[idx:]
         data  = json.loads(clean)
         items = data if isinstance(data, list) else [data]
         return [e for e in items if isinstance(e, dict) and e.get("es_evento")]
