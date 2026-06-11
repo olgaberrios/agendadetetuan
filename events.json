@@ -60,6 +60,17 @@
     "created_at": "2026-06-09T09:03:10.133389+00:00"
   },
   {
+    "id": "manual-1781098920506",
+    "title": "Charla: Tetuán. El hilo rojo de nuestras fiestas. Organizar el barrio",
+    "datetime": "2026-06-12T17:30:00.000Z",
+    "end_datetime": null,
+    "location": "Espacio Lorenzana. Calle Lorenzana 2",
+    "description": "Habrá picoteo",
+    "image_url": null,
+    "source_id": "manual",
+    "created_at": "2026-06-10T13:42:00.950Z"
+  },
+  {
     "id": "0d0fadb397",
     "title": "Concierto de Bsas de Sonoras",
     "datetime": "2026-06-12T19:15:00",
@@ -70,17 +81,6 @@
     "image_hash": "b7d623aefde2f13fc0bfb025e37e67c9",
     "source_id": "img_171_0",
     "created_at": "2026-06-11T13:22:24.520748+00:00"
-  },
-  {
-    "id": "manual-1781098920506",
-    "title": "Charla: Tetuán. El hilo rojo de nuestras fiestas. Organizar el barrio",
-    "datetime": "2026-06-12T17:30:00.000Z",
-    "end_datetime": null,
-    "location": "Espacio Lorenzana. Calle Lorenzana 2",
-    "description": "Habrá picoteo",
-    "image_url": null,
-    "source_id": "manual",
-    "created_at": "2026-06-10T13:42:00.950Z"
   },
   {
     "id": "a644e24728",
@@ -165,6 +165,18 @@
     "image_hash": "bd1cdfe7ac5dca019541cd45021d5f40",
     "source_id": "img_4962_0",
     "created_at": "2026-06-11T13:52:18.111531+00:00"
+  },
+  {
+    "id": "aefebc3a5f",
+    "title": "30 AÑOS DE LUCHA TIZIANO DA UN PASO AL FRENTE",
+    "datetime": "2026-06-19T19:30:00",
+    "end_datetime": null,
+    "location": "C/ Teruel 38",
+    "description": "Ven a conocernos y organízate con tus vecinas. Mesa redonda, mural histórico de Tiziano-Dulcinea y cena. Locación histórica del complejo Tiziano, Tetuán, Madrid. greater_contexto=amenazas de desahucios en viviendas tapiadas, desalojos de infraviviendas, explotación inmobiliaria.",
+    "image_url": "https://agendadetetuan.github.io/calendario/images/aefebc3a5f.jpg",
+    "image_hash": "8c4815e854b411315001d0296365ada5",
+    "source_id": "img_4967_0",
+    "created_at": "2026-06-11T22:36:05.844653+00:00"
   },
   {
     "id": "b6bdf8bc9f",
