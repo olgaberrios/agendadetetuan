@@ -60,17 +60,6 @@
     "created_at": "2026-06-09T09:03:10.133389+00:00"
   },
   {
-    "id": "manual-1781098920506",
-    "title": "Charla: Tetuán. El hilo rojo de nuestras fiestas. Organizar el barrio",
-    "datetime": "2026-06-12T07:30:00.000Z",
-    "end_datetime": null,
-    "location": "Espacio Lorenzana. Calle Lorenzana 2",
-    "description": "Habrá picoteo",
-    "image_url": null,
-    "source_id": "manual",
-    "created_at": "2026-06-10T13:42:00.950Z"
-  },
-  {
     "id": "0d0fadb397",
     "title": "Concierto de Bsas de Sonoras",
     "datetime": "2026-06-12T19:15:00",
@@ -81,6 +70,17 @@
     "image_hash": "b7d623aefde2f13fc0bfb025e37e67c9",
     "source_id": "img_171_0",
     "created_at": "2026-06-11T13:22:24.520748+00:00"
+  },
+  {
+    "id": "manual-1781098920506",
+    "title": "Charla: Tetuán. El hilo rojo de nuestras fiestas. Organizar el barrio",
+    "datetime": "2026-06-12T17:30:00.000Z",
+    "end_datetime": null,
+    "location": "Espacio Lorenzana. Calle Lorenzana 2",
+    "description": "Habrá picoteo",
+    "image_url": null,
+    "source_id": "manual",
+    "created_at": "2026-06-10T13:42:00.950Z"
   },
   {
     "id": "a644e24728",
