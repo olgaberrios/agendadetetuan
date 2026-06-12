@@ -36,30 +36,6 @@
     "created_at": "2026-06-03T12:30:33.338811+00:00"
   },
   {
-    "id": "8bd72041d4",
-    "title": "Fiesta fin de curso del CEIP Zuloaga",
-    "datetime": "2026-06-11T17:00:00",
-    "end_datetime": null,
-    "location": "CEIP Ignacio Zuloaga, Calle Alejandro Rodríguez 34, Patio de Primaria",
-    "description": "Cuándo: 11 de junio desde las 17 horas\nDónde: Calle Alejandro Rodríguez 34\nFIESTA FIN DE CURSO\nCEIP IGNACIO ZULOAGA\n11 JUNIO\nDESDE LAS 17:00 PM\nEN EL PATIO DE PRIMARIA\n¡VEN A CELEBRAR LA ÚLTIMA FIESTA DEL CURSO!\nJuegos de agua, pintacaras, música, sorteos y muchas sorpresas más.\n¡TE ESPERAMOS!\n¡TRAE TU PROPIO VASO!",
-    "image_url": "https://agendadetetuan.github.io/calendario/images/8bd72041d4.jpg",
-    "image_hash": "02b981dc3d348e755eb27b5ce1a6ee0d",
-    "source_id": "img_169_0",
-    "created_at": "2026-06-11T13:19:21.970617+00:00"
-  },
-  {
-    "id": "95181993c2",
-    "title": "Presentación de \"La flor más bella\"",
-    "datetime": "2026-06-11T18:00:00",
-    "end_datetime": null,
-    "location": "Biblioteca Pública Municipal Manuel Vázquez Montalbán, C. de Francos Rodríguez, 67, Tetuán, 28039 Madrid",
-    "description": "PRESENTACIÓN\nDirigido a mayores de 6 años\nLa flor más bella\nJueves, 11 de junio\na las 18:00h\nAutora: Mercedes Díaz Martínez\nBiblioteca Pública Municipal Manuel Vázquez Montalbán\nC. de Francos Rodríguez, 67, Tetuán, 28039 Madrid\nEntrada libre hasta completar aforo.",
-    "image_url": "https://agendadetetuan.github.io/calendario/images/95181993c2.jpg",
-    "image_hash": "0884ba360f52dde12e0604e8d84e9f94",
-    "source_id": "img_146_0",
-    "created_at": "2026-06-09T09:03:10.133389+00:00"
-  },
-  {
     "id": "manual-1781098920506",
     "title": "Charla: Tetuán. El hilo rojo de nuestras fiestas. Organizar el barrio",
     "datetime": "2026-06-12T17:30:00.000Z",
